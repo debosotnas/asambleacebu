@@ -21,6 +21,16 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+            /*
+            $table->id();
+            $table->foreign('church_id')->references('id')->on('churches');
+            $table->string('ci');
+            $table->string('name');
+            $table->string('email')->unique()->nullable();
+            $table->string('phone')->unique()->nullable();
+            $table->string('password');
+            $table->timestamps();            
+            */
         });
     }
 
