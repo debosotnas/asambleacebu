@@ -1,0 +1,25 @@
+GET http://127.0.0.1:8000/api/churches HTTP/1.1
+
+###
+POST http://127.0.0.1:8000/api/churches HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "Second555777 church5577",
+    "members": "17"
+}
+
+###
+PUT http://127.0.0.1:8000/api/churches/5 HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "Third church1",
+    "members": "3"
+}
+
+###
+DELETE http://127.0.0.1:8000/api/churches/3 HTTP/1.1
+
+### ////////////////////////
+

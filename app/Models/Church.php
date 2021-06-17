@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Church extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'name', 'members'
+    ];
 }
