@@ -1,10 +1,14 @@
 <?php
 
 use App\Http\Controllers\ChurchesApiController;
+use App\Http\Controllers\ElectionsApiController;
+use App\Http\Controllers\OptionsApiController;
+use App\Http\Controllers\UsersApiController;
+use App\Http\Controllers\VotesApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Models\Church;
+// use App\Models\Church;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,49 +21,33 @@ use App\Models\Church;
 |
 */
 
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
 
 Route::get('/churches', [ChurchesApiController::class, 'index']);
 Route::post('/churches', [ChurchesApiController::class, 'store']);
 Route::put('/churches/{church}', [ChurchesApiController::class, 'update']);
 Route::delete('/churches/{church}', [ChurchesApiController::class, 'destroy']);
 
-// Route::post('/churches', function() {
+Route::get('/users', [UsersApiController::class, 'index']);
+Route::post('/users', [UsersApiController::class, 'store']);
+Route::put('/users/{user}', [UsersApiController::class, 'update']);
+Route::delete('/users/{user}', [UsersApiController::class, 'destroy']);
 
-//     request()->validate([
-//         'name' => 'required',
-//         'members' => 'required',
-//     ]);
-//     return Church::create([
-//         'name' => request('name'),
-//         'members' => request('members'),
-//     ]);
-// });
+Route::get('/elections', [ElectionsApiController::class, 'index']);
+Route::post('/elections', [ElectionsApiController::class, 'store']);
+Route::put('/elections/{election}', [ElectionsApiController::class, 'update']);
+Route::delete('/elections/{election}', [ElectionsApiController::class, 'destroy']);
 
-// Route::put('/churches/{church}', function(Church $church) {
-//     request()->validate([
-//         'name' => 'required',
-//         'members' => 'required',
-//     ]);
+Route::get('/options', [OptionsApiController::class, 'index']);
+Route::post('/options', [OptionsApiController::class, 'store']);
+Route::put('/options/{option}', [OptionsApiController::class, 'update']);
+Route::delete('/options/{option}', [OptionsApiController::class, 'destroy']);
 
-//     $sucess = $church->update([
-//         'name' => request('name'),
-//         'members' => request('members')
-//     ]);
-
-//     return [
-//         'success' => $sucess
-//     ];
-// });
-
-// Route::delete('/churches/{church}', function(Church $church) {
-
-//     $sucess = $church->delete();
-
-//     return [
-//         'success' => $sucess
-//     ];
-// });
-
+Route::get('/votes', [VotesApiController::class, 'index']);
+Route::post('/votes', [VotesApiController::class, 'store']);
+Route::put('/votes/{vote}', [VotesApiController::class, 'update']);
+Route::delete('/votes/{vote}', [VotesApiController::class, 'destroy']);

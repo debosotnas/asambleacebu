@@ -12,7 +12,6 @@ class ChurchesApiController extends Controller
     }
 
     public function store(){
-
         request()->validate([
             'name' => 'required',
             'members' => 'required',
@@ -24,27 +23,23 @@ class ChurchesApiController extends Controller
     }
 
     public function update(Church $church){
-
         request()->validate([
             'name' => 'required',
             'members' => 'required',
         ]);
-
-        $sucess = $church->update([
+        $success = $church->update([
             'name' => request('name'),
             'members' => request('members')
         ]);
-
         return [
-            'success' => $sucess
-        ];        
+            'success' => $success
+        ];
     }
     
     public function destroy(Church $church){
-        $sucess = $church->delete();
-
+        $success = $church->delete();
         return [
-            'success' => $sucess
+            'success' => $success
         ];
     }
 }
