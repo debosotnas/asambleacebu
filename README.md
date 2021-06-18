@@ -60,3 +60,20 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Aditinal "Asamblea CEBU - 2021" project info
+
+Next two lines are required on every React component page:
+<p>
+/** @jsxImportSource @emotion/react */
+import { jsx, css } from "@emotion/react";
+</p>
+
+To test in local/dev environment, use (both at same time):
+- npm run hot
+- php artisan serve
+
+Ports:
+- Direct PHP/Laravel project: http://127.0.0.1:8000/
+- Proxy for watch/hot dev reload: http://localhost:3003/
+
