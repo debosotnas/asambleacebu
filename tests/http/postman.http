@@ -140,3 +140,7 @@ Content-Type: application/json
 
 ###
 DELETE http://127.0.0.1:8000/api/votes/3 HTTP/1.1
+
+### ------------------------------------------------>>> MORE TESTINGS VOTES
+# GET http://127.0.0.1:8000/api/user HTTP/1.1
+

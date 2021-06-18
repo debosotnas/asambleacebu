@@ -49,5 +49,6 @@ Route::delete('/options/{option}', [OptionsApiController::class, 'destroy']);
 
 Route::get('/votes', [VotesApiController::class, 'index']);
 Route::post('/votes', [VotesApiController::class, 'store']);
+//TODO: remove/disable Edit and Delete vote
 Route::put('/votes/{vote}', [VotesApiController::class, 'update']);
 Route::delete('/votes/{vote}', [VotesApiController::class, 'destroy']);
