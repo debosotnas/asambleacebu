@@ -63,6 +63,10 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 ## Aditinal "Asamblea CEBU - 2021" project info
 
+Prior to run the site (dev env), make sure NODE_ENV has 'development' as value. If not, persist by run:
+`export NODE_ENV=development`
+
+
 Next two lines are required on every React component page:
 <p>
 /** @jsxImportSource @emotion/react */
@@ -77,3 +81,5 @@ Ports:
 - Direct PHP/Laravel project: http://127.0.0.1:8000/
 - Proxy for watch/hot dev reload: http://localhost:3003/
 
+Bootstrap UI and Forms:
+- 
