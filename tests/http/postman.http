@@ -25,6 +25,17 @@ DELETE http://127.0.0.1:8000/api/churches/3 HTTP/1.1
 
 ### ///////////////////---------------------------------> USERS
 
+#Login >>> 
+POST http://127.0.0.1:8000/api/users/signin HTTP/1.1
+Content-Type: application/json
+
+{
+    "ci": "39949421",
+    "code": "12345678"
+}
+
+
+###
 GET http://127.0.0.1:8000/api/users HTTP/1.1
 
 

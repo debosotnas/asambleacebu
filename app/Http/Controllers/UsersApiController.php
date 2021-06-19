@@ -59,4 +59,14 @@ class UsersApiController extends Controller
             'success' => $success
         ];
     }
+
+    public function signin() {
+        request()->validate([
+            'ci' => 'required',
+            'code' => 'required',
+        ]);
+        return [
+            'login' => 'ok'
+        ];
+    }
 }

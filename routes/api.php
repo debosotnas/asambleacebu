@@ -36,6 +36,7 @@ Route::get('/users', [UsersApiController::class, 'index']);
 Route::post('/users', [UsersApiController::class, 'store']);
 Route::put('/users/{user}', [UsersApiController::class, 'update']);
 Route::delete('/users/{user}', [UsersApiController::class, 'destroy']);
+Route::post('/users/signin', [UsersApiController::class, 'signin']);
 
 Route::get('/elections', [ElectionsApiController::class, 'index']);
 Route::post('/elections', [ElectionsApiController::class, 'store']);
