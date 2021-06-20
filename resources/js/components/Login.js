@@ -2,6 +2,9 @@
 import { jsx, css } from "@emotion/react";
 import React, { useState } from "react";
 
+import { useTheme } from "@material-ui/core/styles";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+
 import { connect } from "react-redux";
 import { makeLogin } from "../state/actions";
 
@@ -22,7 +25,7 @@ const style = css`
     margin: 5px 0;
 `;
 
-const styles = {
+const makeStyles = ({ isMobile }) => ({
     parentSpan: css`
         margin-top: 10px;
     `,
@@ -32,6 +35,17 @@ const styles = {
     `,
     header: css`
         /* text-align: center; */
+        .subtitle {
+            font-size: ${isMobile ? ".7" : ".8"}rem;
+            text-align: ${isMobile ? "center" : "right"};
+            line-height: 14px;
+            color: #999;
+            ${isMobile ? "margin-bottom: 20px;" : "margin-bottom: 40px;"}
+        }
+        h2 {
+            color: #955;
+            ${isMobile ? "text-align: center" : "text-align: right"}
+        }
     `,
     bodyForm: css`
         min-width: 500px;
@@ -39,10 +53,15 @@ const styles = {
     `,
     subnote: css`
         color: #a55;
+        font-size: 15px;
     `,
-};
+});
 
 const Login = ({ makeLogin, dispatch }) => {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
+    const styles = makeStyles({ isMobile });
+
     const handleSubmit = async () => {
         const ci = document.querySelector("#ci").value;
         // if (!validate_ci(ci)) {
@@ -100,8 +119,19 @@ const Login = ({ makeLogin, dispatch }) => {
                         <Row>
                             <Col>
                                 <div css={styles.header}>
-                                    <h2>Asamblea CEBU</h2>
-                                    <br />
+                                    <h2>
+                                        Asamblea {isMobile && <br />}
+                                        CEBU 2021
+                                    </h2>
+                                    <div class="subtitle">
+                                        "...por medio de las cuales nos ha dado
+                                        preciosas y grandísimas promesas, para
+                                        que por ellas llegaseis a ser
+                                        participantes de la naturaleza divina,
+                                        habiendo huido de la corrupción que hay
+                                        en el mundo a causa de la
+                                        concupiscencia;" — 2 Pe. 1:4
+                                    </div>
                                 </div>
                             </Col>
                         </Row>
@@ -112,7 +142,7 @@ const Login = ({ makeLogin, dispatch }) => {
                                 <span css={styles.span}>
                                     C.I.{" "}
                                     <span css={styles.subnote}>
-                                        (Sin puntos ni guiones)
+                                        (sin puntos ni guiones)
                                     </span>
                                     :
                                 </span>

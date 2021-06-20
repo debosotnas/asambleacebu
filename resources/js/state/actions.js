@@ -47,6 +47,9 @@ const fetchLogin = (payload) => async (dispatch, getState) => {
 };
 */
 
+export const makeLogout = async (payload) => {
+    return {};
+};
 export const makeLogin = async (payload) => {
     const response = await callFetchLogin(payload);
     let result;
