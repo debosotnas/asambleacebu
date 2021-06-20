@@ -19,25 +19,21 @@ import Button from "react-bootstrap/Button";
 
 import Login from "./Login";
 import Home from "./Home";
+import GlobalAlert from "./GlobalAlert";
 
 const getStyles = ({ isMobile, isLogged }) => ({
     parentContainer: css`
-        /*
-        ::after {
-            content: "";
-            background: url(${BgImage});
-            opacity: 1;
+        position: relative;
+        .alert-parent {
+            position: absolute;
             top: 0;
             left: 0;
-            bottom: 0;
-            right: 0;
-            position: absolute;
-            z-index: -1;
-        }*/
+            z-index: 100;
+            margin: 0 10px;
+        }
     `,
     mainContainer: css`
         margin-top: 14px;
-        /* padding-top: ${isMobile || isLogged ? 14 : 20}px; */
         padding-top: ${isLogged ? 14 : 50}px;
         min-height: 800px;
         margin-bottom: 0;
@@ -76,39 +72,50 @@ const getStyles = ({ isMobile, isLogged }) => ({
     `,
 });
 
-const App = ({ isLogged }) => {
+const App = ({ isLogged, globalAlert, dispatch }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
 
     const styles = getStyles({ isLogged, isMobile });
     return (
-        <Container fluid css={styles.parentContainer}>
-            <Jumbotron css={styles.mainContainer}>
-                <Row>
-                    <Col css={isMobile ? styles.colItem : []}>
-                        {isLogged ? <Home /> : <Login />}
-                    </Col>
-                </Row>
-            </Jumbotron>
-            <div css={styles.noteFooter}>
-                <a
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    href="https://firmesensupalabra.com"
-                >
-                    powered by FirmesEnSuPalabra.com
-                </a>
-            </div>
-        </Container>
+        <>
+            <Container fluid css={styles.parentContainer}>
+                <GlobalAlert dispatch={dispatch} globalAlert={globalAlert} />
+
+                <Jumbotron css={styles.mainContainer}>
+                    <Row>
+                        <Col css={isMobile ? styles.colItem : []}>
+                            {isLogged ? <Home /> : <Login />}
+                        </Col>
+                    </Row>
+                </Jumbotron>
+                <div css={styles.noteFooter}>
+                    <a
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        href="https://firmesensupalabra.com"
+                    >
+                        powered by FirmesEnSuPalabra.com
+                    </a>
+                </div>
+            </Container>
+        </>
     );
 };
 
-const AppConnected = connect((state) => {
-    //TODO: leaving for now in false (isLogged = !) for testing
-    const isLogged = !state.userSession.loggedIn;
-    return {
-        isLogged,
-    };
-})(App);
+const AppConnected = connect(
+    (state) => {
+        //TODO: leaving for now in false (isLogged = !) for testing
+        const isLogged = state.userSession.loggedIn;
+        const globalAlert = { ...state.alertManager };
+        return {
+            isLogged,
+            globalAlert,
+        };
+    },
+    (dispatch) => {
+        return { dispatch };
+    }
+)(App);
 
 export default AppConnected;

@@ -1,4 +1,5 @@
-import { SET_LOGGED_IN, SET_GLOBAL_ERROR } from "./actionTypes";
+import { SET_LOGGED_IN, SHOW_GLOBAL_ALERT } from "./actionTypes";
+import { GLOBAL_ALERT_TYPES } from "./constants";
 
 const BASE_API_PATH = window.location.origin + "/api/";
 const USERS_API_PATH = "users";
@@ -50,32 +51,33 @@ const fetchLogin = (payload) => async (dispatch, getState) => {
 export const makeLogout = async (payload) => {
     return {};
 };
-export const makeLogin = async (payload) => {
+export const makeLogin = async (payload, dispatch) => {
     const response = await callFetchLogin(payload);
     let result;
     if (response.status === 200 && response.redirected) {
-        console.log("error de validacion");
-        return {
-            type: SET_GLOBAL_ERROR,
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
             payload: {
                 msg: "Ocurrió un error al validar los datos de entrada (C.I/Celular/Email/Código). Por favor verifica tus datos e intenta nuevamente",
                 code: response.status,
+                type: GLOBAL_ALERT_TYPES.ERROR,
             },
-        };
+        });
     } else if (response.status === 200) {
         console.log("login correcto");
         result = await response.json();
         // console.log(result);
-        return { type: "TEST_TEST_!", payload };
+        dispatch({ type: "TEST_TEST_", payload });
+        // dispatch({ type: "TEST_TEST", payload });
     } else {
-        console.log("error!!");
-        return {
-            type: SET_GLOBAL_ERROR,
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
             payload: {
                 msg: "Ocurrió un error al ingresar con este usuario. Por favor reintenta nuevamente",
                 code: response.status,
+                type: GLOBAL_ALERT_TYPES.ERROR,
             },
-        };
+        });
     }
 };
 

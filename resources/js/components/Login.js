@@ -100,11 +100,11 @@ const Login = ({ makeLogin, dispatch }) => {
 
         // console.log(">>> payload: ", payload);
 
-        try {
-            await makeLogin(payload);
-        } catch (e) {
-            console.log("Error after try makeLogin! / E: ", e);
-        }
+        // try {
+        await makeLogin(payload, dispatch);
+        // } catch (e) {
+        //     console.log("Error after try makeLogin! / E: ", e);
+        // }
 
         // call to login service
         // retrieve result and setup cookie and session.
@@ -225,6 +225,7 @@ const LoginConnected = connect(
     (dispatch) => {
         return { makeLogin, dispatch };
     }
+    // { makeLogin }
 )(Login);
 
 export default LoginConnected;

@@ -10,6 +10,7 @@ const initialState = {
         email: null,
         phone: null,
         church: null,
+        churchId: null,
     },
 };
 

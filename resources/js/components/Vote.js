@@ -19,55 +19,6 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import { validateAccess } from "./helpers";
 
 const makeStyles = ({ isMobile }) => ({
-    header: css`
-        text-align: ${isMobile ? "left" : "center"};
-        position: relative;
-        .title {
-            font-size: ${isMobile ? "1.5" : "2"}rem;
-        }
-        .subtitle {
-            font-size: ${isMobile ? ".8" : ".8"}rem;
-            text-align: ${isMobile ? "right" : "center"};
-            color: #999;
-            line-height: 14px;
-            margin: 20px 10px;
-        }
-    `,
-    headerActions: css`
-        position: absolute;
-        top: 5px;
-        right: 0;
-    `,
-    parentSpan: css`
-        margin-top: 10px;
-    `,
-    blockSection: css`
-        background-color: aliceblue;
-        padding: 20px;
-        margin: 10px 0;
-        /* min-height: ${isMobile ? "inherit" : "200"}px; */
-    `,
-    blockSectionWithSpace: css`
-        background-color: aliceblue;
-        margin: 10px 0;
-        min-height: ${isMobile ? "inherit" : "200"}px;
-    `,
-    colItem: css`
-        padding-left: 0;
-        padding-right: 0;
-    `,
-    colItemJumbo: css`
-        padding-left: 3px;
-        padding-right: 3px;
-    `,
-    tagData: css`
-        word-break: break-word;
-        color: #770000;
-        span {
-            color: #555;
-        }
-    `,
-    /* ********************************* */
     nextVotationBlock: css`
         /* margin-top: 10px; */
     `,
@@ -141,17 +92,7 @@ const Vote = ({ opts, dispatch }) => {
     const [fakeVoteScreen, setFakeVoteScreen] = useState(false);
 
     let [countClock, setClockCount] = useState(59);
-    let timeOut;
 
-    // setInterval(() => {
-    //     // const upd = countClock - 1;
-    //     // console.log("upd: ", upd);
-    //     // console.log(countClock);
-    //     console.log("countClock: ", countClock);
-    //     // setClockCount(upd >= 0 ? upd : 0);
-    //     // setClockCount(upd);
-    //     setClockCount(countClock - 1);
-    // }, 1000);
     const makeMoveClock = (sec) => {
         console.log("MoveClock!!");
         setClockCount(sec);
@@ -161,20 +102,9 @@ const Vote = ({ opts, dispatch }) => {
     };
 
     const handleEnterToVote = () => {
-        // if (timeOut) {
-        //     clearInterval(timeOut);
-        // }
         setTimeout(() => {
             makeMoveClock(59);
         }, 1000);
-        // countClock = 59;
-        // console.log("--->!", countClock);
-        // setClockCount(59);
-        // timeOut = setInterval(() => {
-        //     console.log("countClock: ", countClock);
-        //     setClockCount(countClock - 1);
-        // }, 1000);
-        // console.log("enter to vote");
         setFakeVoteScreen(true);
     };
     const handleConfirmAndVote = () => {
