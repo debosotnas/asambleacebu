@@ -1,4 +1,4 @@
-import { SET_LOGGED_IN } from "../actionTypes";
+import { SET_LOGGED_IN, SET_LOGOUT } from "../actionTypes";
 
 const initialState = {
     loggedIn: false,
@@ -27,11 +27,12 @@ const userSession = (state = initialState, action) => {
                 },
             };
         }
-        case "TEST_TEST": {
-            console.log(">>> Internal: ", action.payload);
+        case SET_LOGOUT: {
             return {
-                loggedIn: true,
-                lalala: 1,
+                ...initialState,
+                info: {
+                    ...initialState.info,
+                },
             };
         }
         default: {

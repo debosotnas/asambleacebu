@@ -1,4 +1,4 @@
-import { SET_LOGGED_IN, SHOW_GLOBAL_ALERT } from "./actionTypes";
+import { SET_LOGGED_IN, SET_LOGOUT, SHOW_GLOBAL_ALERT } from "./actionTypes";
 import { GLOBAL_ALERT_TYPES } from "./constants";
 
 const BASE_API_PATH = window.location.origin + "/api/";
@@ -48,9 +48,10 @@ const fetchLogin = (payload) => async (dispatch, getState) => {
 };
 */
 
-export const makeLogout = async (payload) => {
-    return {};
+export const makeLogout = async (dispatch) => {
+    return dispatch({ type: SET_LOGOUT });
 };
+
 export const makeLogin = async (payload, dispatch) => {
     const response = await callFetchLogin(payload);
     let result;
@@ -64,11 +65,20 @@ export const makeLogin = async (payload, dispatch) => {
             },
         });
     } else if (response.status === 200) {
-        console.log("login correcto");
-        result = await response.json();
-        // console.log(result);
-        dispatch({ type: "TEST_TEST", payload });
-        // dispatch({ type: "TEST_TEST", payload });
+        try {
+            result = await response.json();
+            dispatch({ type: SET_LOGGED_IN, payload });
+        } catch (e) {
+            dispatch({
+                type: SHOW_GLOBAL_ALERT,
+                payload: {
+                    msg: "Ocurrió un error al procesar la info de Login, por favor reintenta nuevamente. Si el problema persiste, consulta con el administrador",
+                    code: "159",
+                    type: GLOBAL_ALERT_TYPES.ERROR,
+                },
+            });
+            console.log("Error after try makeLogin! - Err: ", e);
+        }
     } else {
         dispatch({
             type: SHOW_GLOBAL_ALERT,
@@ -80,11 +90,3 @@ export const makeLogin = async (payload, dispatch) => {
         });
     }
 };
-
-// export const makeLogin2 = (payload) => async (dispatch) => {
-//     // const loginResult = await dispatch(fetchLogin(payload));
-//     console.log(">>> PAYLOAD: ", payload);
-//     // dispatch({ type: "TEST_TEST" }); //, payload: {...payload} });
-//     // return loginResult;
-//     return { type: "TEST_TEST" };
-// };

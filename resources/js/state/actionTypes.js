@@ -1,4 +1,5 @@
 export const SET_LOGGED_IN = "SET_LOGGED_IN";
+export const SET_LOGOUT = "SET_LOGOUT";
 // export const SET_GLOBAL_ERROR = "SET_GLOBAL_ERROR";
 
 export const SHOW_GLOBAL_ALERT = "SHOW_GLOBAL_ALERT";

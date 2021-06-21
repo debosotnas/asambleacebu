@@ -18,8 +18,6 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 
-import { validateAccess } from "./helpers";
-
 const makeStyles = ({ isMobile }) => ({
     nextVotationBlock: css`
         .main-btn-container {

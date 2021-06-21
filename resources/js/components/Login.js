@@ -97,19 +97,13 @@ const Login = ({ makeLogin, dispatch }) => {
             email,
             code,
         };
-        // dispatch({ type: "TEST_TEST", payload });
 
-        // console.log(">>> payload: ", payload);
-
-        // try {
-        await makeLogin(payload, dispatch);
-        // } catch (e) {
-        //     console.log("Error after try makeLogin! / E: ", e);
-        // }
-
-        // call to login service
-        // retrieve result and setup cookie and session.
-        // navigate and show next screen (automatically when <App> detects that user is logged in)
+        try {
+            await makeLogin(payload, dispatch);
+        } catch (e) {
+            console.log("Error after try makeLogin! - Err: ", e);
+        }
+        // TODO: retrieve result and setup cookie and session.
     };
 
     return (

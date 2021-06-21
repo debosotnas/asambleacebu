@@ -7,6 +7,7 @@ import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 import Vote from "./Vote";
+import Modal from "react-bootstrap/Modal";
 
 import { connect } from "react-redux";
 import { makeLogout } from "../state/actions";
@@ -87,127 +88,157 @@ const makeStyles = ({ isMobile }) => ({
     `,
 });
 
-const Home = ({ name, ci, email, phone, church, dispatch }) => {
+const Home = ({ name, ci, email, phone, church, makeLogout, dispatch }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
     const styles = makeStyles({ isMobile });
 
-    const handleEnterToVote = () => {
-        console.log("enter to vote");
-    };
+    const [showConfirm, setShowConfirm] = useState(false);
+
     const handleLogout = () => {
-        console.log("logout!");
+        setShowConfirm(true);
+    };
+    const handleCloseConfirm = () => {
+        setShowConfirm(false);
+    };
+    const handleLogoutConfirmed = () => {
+        makeLogout(dispatch);
+        setShowConfirm(false);
     };
     return (
-        <Container fluid>
-            <Row>
-                <Col>
-                    <Container>
-                        <Row>
-                            <Col>
-                                <div css={styles.header}>
-                                    <h2 className="title">
-                                        Asamblea {isMobile && <br />}
-                                        CEBU 2021
-                                    </h2>
-                                    <div css={styles.headerActions}>
-                                        <Button
-                                            onClick={() => {
-                                                handleLogout();
-                                            }}
-                                            variant="outline-danger"
-                                            size="sm"
-                                        >
-                                            {isMobile
-                                                ? "Salir"
-                                                : "Cerrar sesión"}{" "}
-                                            <ExitToAppIcon />
-                                        </Button>
+        <>
+            <Container fluid>
+                <Row>
+                    <Col>
+                        <Container>
+                            <Row>
+                                <Col>
+                                    <div css={styles.header}>
+                                        <h2 className="title">
+                                            Asamblea {isMobile && <br />}
+                                            CEBU 2021
+                                        </h2>
+                                        <div css={styles.headerActions}>
+                                            <Button
+                                                onClick={() => {
+                                                    handleLogout();
+                                                }}
+                                                variant="outline-danger"
+                                                size="sm"
+                                            >
+                                                {isMobile
+                                                    ? "Salir"
+                                                    : "Cerrar sesión"}{" "}
+                                                <ExitToAppIcon />
+                                            </Button>
+                                        </div>
+                                        <div class="subtitle">
+                                            "...por medio de las cuales nos ha
+                                            dado preciosas y grandísimas
+                                            promesas, para que por ellas
+                                            llegaseis a ser participantes de la
+                                            naturaleza divina, habiendo huido de
+                                            la corrupción que hay en el mundo a
+                                            causa de la concupiscencia;" — 2 Pe.
+                                            1:4
+                                        </div>
                                     </div>
-                                    <div class="subtitle">
-                                        "...por medio de las cuales nos ha dado
-                                        preciosas y grandísimas promesas, para
-                                        que por ellas llegaseis a ser
-                                        participantes de la naturaleza divina,
-                                        habiendo huido de la corrupción que hay
-                                        en el mundo a causa de la
-                                        concupiscencia;" — 2 Pe. 1:4
+                                </Col>
+                            </Row>
+                        </Container>
+                        <Container>
+                            <Row css={styles.parentSpan}>
+                                <Col css={isMobile ? styles.colItem : []}>
+                                    <div css={styles.sectionTitle}>
+                                        Mis datos:
                                     </div>
-                                </div>
-                            </Col>
-                        </Row>
-                    </Container>
-                    <Container>
-                        <Row css={styles.parentSpan}>
-                            <Col css={isMobile ? styles.colItem : []}>
-                                <div css={styles.sectionTitle}>Mis datos:</div>
-                                <Jumbotron
-                                    css={
-                                        isMobile
-                                            ? [
-                                                  styles.blockSection,
-                                                  styles.colItemJumbo,
-                                              ]
-                                            : styles.blockSection
-                                    }
-                                >
-                                    <Container>
-                                        <Row>
-                                            <Col xs={6}>
-                                                <div css={styles.tagData}>
-                                                    <span>C.I.:</span> {ci}
-                                                </div>
-                                                <div css={styles.tagData}>
-                                                    <span>Nombre:</span> {name}
-                                                </div>
-                                                <div css={styles.tagData}>
-                                                    <span>E-mail:</span> {email}
-                                                </div>
-                                            </Col>
-                                            <Col xs={6}>
-                                                <div css={styles.tagData}>
-                                                    <span>Celular:</span>{" "}
-                                                    {phone}
-                                                </div>
-                                                <div css={styles.tagData}>
-                                                    <span>Iglesia:</span>{" "}
-                                                    {church}
-                                                </div>
-                                            </Col>
-                                        </Row>
-                                    </Container>
-                                </Jumbotron>
-                            </Col>
-                        </Row>
-                    </Container>
-                    <Container css={styles.nextVotationBlock}>
-                        <Row>
-                            <Col css={isMobile ? styles.colItem : []}>
-                                <div css={styles.sectionTitle}>
-                                    Votación disponible:
-                                </div>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col css={isMobile ? styles.colItem : []}>
-                                <Jumbotron
-                                    css={
-                                        isMobile
-                                            ? [
-                                                  styles.blockSectionVote,
-                                                  styles.colItemJumbo,
-                                              ]
-                                            : styles.blockSectionVote
-                                    }
-                                >
-                                    <Vote />
-                                </Jumbotron>
-                            </Col>
-                        </Row>
-                    </Container>
-                </Col>
-            </Row>
-        </Container>
+                                    <Jumbotron
+                                        css={
+                                            isMobile
+                                                ? [
+                                                      styles.blockSection,
+                                                      styles.colItemJumbo,
+                                                  ]
+                                                : styles.blockSection
+                                        }
+                                    >
+                                        <Container>
+                                            <Row>
+                                                <Col xs={6}>
+                                                    <div css={styles.tagData}>
+                                                        <span>C.I.:</span> {ci}
+                                                    </div>
+                                                    <div css={styles.tagData}>
+                                                        <span>Nombre:</span>{" "}
+                                                        {name}
+                                                    </div>
+                                                    <div css={styles.tagData}>
+                                                        <span>E-mail:</span>{" "}
+                                                        {email}
+                                                    </div>
+                                                </Col>
+                                                <Col xs={6}>
+                                                    <div css={styles.tagData}>
+                                                        <span>Celular:</span>{" "}
+                                                        {phone}
+                                                    </div>
+                                                    <div css={styles.tagData}>
+                                                        <span>Iglesia:</span>{" "}
+                                                        {church}
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                        </Container>
+                                    </Jumbotron>
+                                </Col>
+                            </Row>
+                        </Container>
+                        <Container css={styles.nextVotationBlock}>
+                            <Row>
+                                <Col css={isMobile ? styles.colItem : []}>
+                                    <div css={styles.sectionTitle}>
+                                        Votación disponible:
+                                    </div>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col css={isMobile ? styles.colItem : []}>
+                                    <Jumbotron
+                                        css={
+                                            isMobile
+                                                ? [
+                                                      styles.blockSectionVote,
+                                                      styles.colItemJumbo,
+                                                  ]
+                                                : styles.blockSectionVote
+                                        }
+                                    >
+                                        <Vote />
+                                    </Jumbotron>
+                                </Col>
+                            </Row>
+                        </Container>
+                    </Col>
+                </Row>
+            </Container>
+
+            <Modal show={showConfirm} centered onHide={handleCloseConfirm}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Salir</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div>¿Salir y cerrar sesión?</div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseConfirm}>
+                        Cancelar
+                    </Button>
+                    <Button variant="primary" onClick={handleLogoutConfirmed}>
+                        Salir
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </>
     );
 };
 const HomeConnected = connect(
