@@ -26,7 +26,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
+/*
 Route::get('/churches', [ChurchesApiController::class, 'index']);
 Route::post('/churches', [ChurchesApiController::class, 'store']);
 Route::put('/churches/{church}', [ChurchesApiController::class, 'update']);
@@ -36,9 +36,12 @@ Route::get('/users', [UsersApiController::class, 'index']);
 Route::post('/users', [UsersApiController::class, 'store']);
 Route::put('/users/{user}', [UsersApiController::class, 'update']);
 Route::delete('/users/{user}', [UsersApiController::class, 'destroy']);
+*/
 Route::post('/users/signin', [UsersApiController::class, 'signin']);
 
+// get available elections
 Route::get('/elections', [ElectionsApiController::class, 'index']);
+/*
 Route::post('/elections', [ElectionsApiController::class, 'store']);
 Route::put('/elections/{election}', [ElectionsApiController::class, 'update']);
 Route::delete('/elections/{election}', [ElectionsApiController::class, 'destroy']);
@@ -53,3 +56,4 @@ Route::post('/votes', [VotesApiController::class, 'store']);
 //TODO: remove/disable Edit and Delete vote
 Route::put('/votes/{vote}', [VotesApiController::class, 'update']);
 Route::delete('/votes/{vote}', [VotesApiController::class, 'destroy']);
+*/

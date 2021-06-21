@@ -81,5 +81,29 @@ Ports:
 - Direct PHP/Laravel project: http://127.0.0.1:8000/
 - Proxy for watch/hot dev reload: http://localhost:3003/
 
-Bootstrap UI and Forms:
+# Migrate and Seed:
+- Migrate:
+    php artisan migrate
+- Seed:
+    php artisan db:seed
+    php artisan db:seed --class=UserSeeder
+
+
+## Next Steps for CEBU App:
+Admin panel:
+- Add a global control (button) to start/stop VOTATION
+
+- Configure 3 subsections: 
+    - Users And Churches:
+        - create church
+        - create user
+    - List and see results
+        - list how many assist are LOGGED IN by church.
+        - list how many assist had/are voting/voted by church (Total agains Voted).
+        - list 
+
+- Add a button to create/configure new election
+- List elecions available (created) and its states (disabled/enabled)
+    - for each election list its options
+
 - 

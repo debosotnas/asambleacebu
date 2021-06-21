@@ -19,6 +19,7 @@ class CreateVotesTable extends Migration
             $table->foreignId('election_id')->constrained('elections');
             $table->foreignId('option_id')->constrained('options');
             $table->foreignId('user_id')->constrained('users');
+            $table->boolean('active');
             $table->timestamps();
         });
         // }

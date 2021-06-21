@@ -63,6 +63,8 @@ const Login = ({ makeLogin, dispatch }) => {
     const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
     const styles = makeStyles({ isMobile });
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const handleSubmit = async () => {
         const ci = document.querySelector("#ci").value;
         // if (!validate_ci(ci)) {
@@ -99,9 +101,12 @@ const Login = ({ makeLogin, dispatch }) => {
         };
 
         try {
+            setIsLoading(true);
             await makeLogin(payload, dispatch);
         } catch (e) {
             console.log("Error after try makeLogin! - Err: ", e);
+        } finally {
+            setIsLoading(false);
         }
         // TODO: retrieve result and setup cookie and session.
     };
@@ -182,7 +187,7 @@ const Login = ({ makeLogin, dispatch }) => {
                         <Row css={styles.parentSpan}>
                             <Col>
                                 <span css={styles.span}>
-                                    Código de accesso personal:
+                                    Código de Accesso Personal:
                                 </span>
                                 <br />
                                 <input
@@ -202,8 +207,15 @@ const Login = ({ makeLogin, dispatch }) => {
                                     }}
                                     css={{ marginTop: 20 }}
                                     variant="primary"
+                                    disabled={isLoading}
                                 >
-                                    Ingresar <VpnKeyIcon />
+                                    {isLoading ? (
+                                        <span>Cargando info...</span>
+                                    ) : (
+                                        <span>
+                                            Ingresar <VpnKeyIcon />
+                                        </span>
+                                    )}
                                 </Button>
                             </Col>
                         </Row>

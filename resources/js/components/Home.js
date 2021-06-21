@@ -2,6 +2,9 @@
 import { jsx, css } from "@emotion/react";
 import React, { useState } from "react";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import TuneIcon from "@material-ui/icons/Tune";
+import Tabs from "react-bootstrap/Tabs";
+import Tab from "react-bootstrap/Tab";
 
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
@@ -44,12 +47,39 @@ const makeStyles = ({ isMobile }) => ({
     parentSpan: css`
         margin-top: 0;
     `,
+    blockSectionAdmin: css`
+        background-color: #fedcff;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #e028d2;
+        .nav-item.nav-link {
+            background-color: #c28ccc;
+            a {
+                color: #6505af;
+            }
+            &:hover {
+                color: #6505af;
+                background-color: #e5a5f1;
+                border-color: #e5a5f1;
+            }
+        }
+        .nav-item.nav-link.active {
+            background-color: #f4c0fd;
+            border-color: #f4c0fd;
+            a {
+                color: #a0109c;
+            }
+        }
+        .tab-content {
+            background-color: #f4c0fd;
+            padding: 5px 10px;
+        }
+    `,
     blockSection: css`
         background-color: #a9e3ff;
         padding: 20px;
         margin: 10px 0;
         border: 1px solid #68b1d4;
-        /* min-height: ${isMobile ? "inherit" : "200"}px; */
     `,
     blockSectionVote: css`
         background-color: #f7ebd7;
@@ -88,13 +118,27 @@ const makeStyles = ({ isMobile }) => ({
     `,
 });
 
-const Home = ({ name, ci, email, phone, church, makeLogout, dispatch }) => {
+const Home = ({
+    name,
+    ci,
+    email,
+    phone,
+    church,
+    isAdmin,
+    makeLogout,
+    dispatch,
+}) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
     const styles = makeStyles({ isMobile });
 
     const [showConfirm, setShowConfirm] = useState(false);
+    // const [showAdminPanel, setShowAdminPanel] = useState(false); // by default, admin panel is hidden
+    const [showAdminPanel, setShowAdminPanel] = useState(true);
 
+    const handleAdminOnOff = () => {
+        setShowAdminPanel(!showAdminPanel);
+    };
     const handleLogout = () => {
         setShowConfirm(true);
     };
@@ -119,6 +163,17 @@ const Home = ({ name, ci, email, phone, church, makeLogout, dispatch }) => {
                                             CEBU 2021
                                         </h2>
                                         <div css={styles.headerActions}>
+                                            {isAdmin && (
+                                                <Button
+                                                    onClick={() => {
+                                                        handleAdminOnOff();
+                                                    }}
+                                                    variant="outline-info"
+                                                    size="sm"
+                                                >
+                                                    <TuneIcon />
+                                                </Button>
+                                            )}{" "}
                                             <Button
                                                 onClick={() => {
                                                     handleLogout();
@@ -147,6 +202,44 @@ const Home = ({ name, ci, email, phone, church, makeLogout, dispatch }) => {
                             </Row>
                         </Container>
                         <Container>
+                            {showAdminPanel && (
+                                <Row>
+                                    <Col>
+                                        <div css={styles.sectionTitle}>
+                                            Admin:
+                                        </div>
+                                        <Jumbotron
+                                            css={styles.blockSectionAdmin}
+                                        >
+                                            <Tabs
+                                                defaultActiveKey="home"
+                                                transition={false}
+                                                id="noanim-tab-example"
+                                            >
+                                                <Tab
+                                                    eventKey="home"
+                                                    title="Iglesias y Usuarios"
+                                                >
+                                                    Test 1
+                                                </Tab>
+                                                <Tab
+                                                    eventKey="profile"
+                                                    title="Profile"
+                                                >
+                                                    Test 2
+                                                </Tab>
+                                                <Tab
+                                                    eventKey="contact"
+                                                    title="Contact"
+                                                >
+                                                    Test 3
+                                                </Tab>
+                                            </Tabs>
+                                        </Jumbotron>
+                                    </Col>
+                                </Row>
+                            )}
+
                             <Row css={styles.parentSpan}>
                                 <Col css={isMobile ? styles.colItem : []}>
                                     <div css={styles.sectionTitle}>
@@ -241,18 +334,20 @@ const Home = ({ name, ci, email, phone, church, makeLogout, dispatch }) => {
         </>
     );
 };
+
 const HomeConnected = connect(
     (state) => {
         //Todo: uncomment later
-        // const { name, ci, email, phone, church } =
-        //     (state.userSession && state.userSession.info) || {};
-        let {
-            name = "Adán Pérez",
-            ci = "1.234.567-8",
-            email = "adan.perez@gmail.com",
-            phone = "091 234 567",
-            church = "Primera Iglesia de mi barrio",
-        } = {};
+        const { name, ci, email, phone, church } =
+            (state.userSession && state.userSession.info) || {};
+        const role = state.userSession && state.userSession.role;
+        // let {
+        //     name = "Adán Pérez",
+        //     ci = "1.234.567-8",
+        //     email = "adan.perez@gmail.com",
+        //     phone = "091 234 567",
+        //     church = "Primera Iglesia de mi barrio",
+        // } = {};
 
         return {
             name,
@@ -260,6 +355,7 @@ const HomeConnected = connect(
             email,
             phone,
             church,
+            isAdmin: role === "admin",
         };
     },
     (dispatch) => {

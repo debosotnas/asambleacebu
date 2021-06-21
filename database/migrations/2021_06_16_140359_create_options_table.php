@@ -17,6 +17,7 @@ class CreateOptionsTable extends Migration
             $table->id();
             $table->foreignId('election_id')->constrained('elections');
             $table->string('name');
+            $table->boolean('active');
             $table->timestamps();
         });
     }

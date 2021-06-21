@@ -17,13 +17,30 @@ const initialState = {
 const userSession = (state = initialState, action) => {
     switch (action.type) {
         case SET_LOGGED_IN: {
-            const { userId, role, info } = action.payload;
+            console.log(">>> action: ", action);
+            // const { id: userId, role, info } = action.payload;
+            const {
+                ci,
+                cid: churchId,
+                cname: church,
+                email,
+                id: userId,
+                name,
+                phone,
+                role,
+            } = action.payload;
+
             return {
                 loggedIn: true,
                 userId,
                 role,
                 info: {
-                    ...info,
+                    ci,
+                    name,
+                    email,
+                    phone,
+                    church,
+                    churchId,
                 },
             };
         }

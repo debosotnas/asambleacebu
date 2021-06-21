@@ -1,4 +1,9 @@
-import { SET_LOGGED_IN, SET_LOGOUT, SHOW_GLOBAL_ALERT } from "./actionTypes";
+import {
+    SET_LOGGED_IN,
+    SET_LOGOUT,
+    SHOW_GLOBAL_ALERT,
+    HIDE_GLOBAL_ALERT,
+} from "./actionTypes";
 import { GLOBAL_ALERT_TYPES } from "./constants";
 
 const BASE_API_PATH = window.location.origin + "/api/";
@@ -67,7 +72,22 @@ export const makeLogin = async (payload, dispatch) => {
     } else if (response.status === 200) {
         try {
             result = await response.json();
-            dispatch({ type: SET_LOGGED_IN, payload });
+            console.log(">>>>>>>>>>>>>>> result: ", result);
+            if (result && result.id && result.cid) {
+                console.log(">>> RESULT: ", result);
+                dispatch({ type: HIDE_GLOBAL_ALERT });
+                dispatch({ type: SET_LOGGED_IN, payload: { ...result } });
+            } else {
+                dispatch({
+                    type: SHOW_GLOBAL_ALERT,
+                    payload: {
+                        msg: "Datos no encontrados en el sistema. Intenta nuevamente, esta vez ingresando solo tu C.I y Código de Acceso Personal. Si el problema persiste verifica que tu iglesia haya enviado tus datos correctamente a la CEBU.",
+                        code: "157",
+                        type: GLOBAL_ALERT_TYPES.INFO,
+                        withTime: false,
+                    },
+                });
+            }
         } catch (e) {
             dispatch({
                 type: SHOW_GLOBAL_ALERT,

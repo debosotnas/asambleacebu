@@ -7,9 +7,14 @@ const GlobalAlert = ({ globalAlert, dispatch }) => {
         return null;
     }
 
-    setTimeout(() => {
-        handleOnClose();
-    }, 6000);
+    if (globalAlert.withTime) {
+        const timeToShow = isNaN(globalAlert.withTime)
+            ? 6000
+            : globalAlert.withTime;
+        setTimeout(() => {
+            handleOnClose();
+        }, timeToShow);
+    }
 
     const handleOnClose = () => {
         dispatch({ type: HIDE_GLOBAL_ALERT });

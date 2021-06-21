@@ -17,6 +17,7 @@ class CreateChurchesTable extends Migration
             $table->id();
             $table->string('name');
             $table->integer('members');
+            $table->boolean('active');
             $table->timestamps();
         });
     }
