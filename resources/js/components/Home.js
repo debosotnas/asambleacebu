@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from "@emotion/react";
 import React, { useState } from "react";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
@@ -43,13 +44,13 @@ const makeStyles = ({ isMobile }) => ({
         margin-top: 10px;
     `,
     blockSection: css`
-        background-color: aliceblue;
+        background-color: #a9e3ff;
         padding: 20px;
         margin: 10px 0;
         /* min-height: ${isMobile ? "inherit" : "200"}px; */
     `,
     blockSectionWithSpace: css`
-        background-color: aliceblue;
+        background-color: #a9e3ff;
         margin: 10px 0;
         min-height: ${isMobile ? "inherit" : "200"}px;
     `,
@@ -66,7 +67,7 @@ const makeStyles = ({ isMobile }) => ({
     `,
     tagData: css`
         word-break: break-word;
-        color: #770000;
+        color: #001f77;
         span {
             color: #555;
         }
@@ -106,7 +107,8 @@ const Home = ({ name, ci, email, phone, church, dispatch }) => {
                                         >
                                             {isMobile
                                                 ? "Salir"
-                                                : "Cerrar sesión"}
+                                                : "Cerrar sesión"}{" "}
+                                            <ExitToAppIcon />
                                         </Button>
                                     </div>
                                     <div class="subtitle">
@@ -163,24 +165,6 @@ const Home = ({ name, ci, email, phone, church, dispatch }) => {
                                     </Container>
                                 </Jumbotron>
                             </Col>
-
-                            {/*
-                            <Col sm={12} md={6}>
-                                <div>Mis datos:</div>
-                                <Jumbotron css={styles.blockSection}>
-                                    <div>C.I.: {ci}</div>
-                                    <div>Nombre: {name}</div>
-                                    <div>E-mail: {email}</div>
-                                    <div>Celular: {phone}</div>
-                                    <div>Iglesia: {church}</div>
-                                </Jumbotron>
-                            </Col>
-                             <Col sm={12} md={6}>
-                                <div>Última votación:</div>
-                                <Jumbotron
-                                    css={styles.blockSectionWithSpace}
-                                ></Jumbotron>
-                            </Col> */}
                         </Row>
                     </Container>
                     <Container css={styles.nextVotationBlock}>

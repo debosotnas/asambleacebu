@@ -1,6 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from "@emotion/react";
 import React, { useState } from "react";
+import HowToVoteIcon from "@material-ui/icons/HowToVote";
+import VisibilityIcon from "@material-ui/icons/Visibility";
 
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
@@ -96,9 +98,11 @@ const Vote = ({ opts, dispatch }) => {
     const makeMoveClock = (sec) => {
         console.log("MoveClock!!");
         setClockCount(sec);
-        setTimeout(() => {
-            makeMoveClock(sec - 1);
-        }, 1000);
+        if (sec > 0) {
+            setTimeout(() => {
+                makeMoveClock(sec - 1);
+            }, 1000);
+        }
     };
 
     const handleEnterToVote = () => {
@@ -158,7 +162,7 @@ const Vote = ({ opts, dispatch }) => {
                                 variant="primary"
                             >
                                 Haga click aquí para ver la votación que está
-                                disponible
+                                disponible <VisibilityIcon />
                             </Button>
                         </Col>
                     </Row>
@@ -175,7 +179,14 @@ const Vote = ({ opts, dispatch }) => {
                                     <span class="time-in-curse">
                                         Tiempo restante:
                                     </span>{" "}
-                                    <span class="time">00:{countClock}</span>
+                                    <span class="time">
+                                        00:
+                                        {countClock > 0
+                                            ? countClock > 9
+                                                ? countClock
+                                                : `0${countClock}`
+                                            : "00"}
+                                    </span>
                                 </div>
                             </Col>
                         </Row>
@@ -230,7 +241,8 @@ const Vote = ({ opts, dispatch }) => {
                                     {isLoading
                                         ? "Enviando voto..."
                                         : `Confirmar selección
-                                    y enviar voto`}
+                                    y enviar voto`}{" "}
+                                    <HowToVoteIcon />
                                 </Button>
                             </Col>
                         </Row>
@@ -256,7 +268,7 @@ const Vote = ({ opts, dispatch }) => {
                         Cancelar
                     </Button>
                     <Button variant="primary" onClick={handleSendVote}>
-                        Enviar voto
+                        Enviar
                     </Button>
                 </Modal.Footer>
             </Modal>

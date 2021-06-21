@@ -65,6 +65,8 @@ class UsersApiController extends Controller
             'ci' => 'required',
             'code' => 'required',
         ]);
+        $phone = request('church_id');
+        $email = request('church_id');
         return [
             'login' => 'ok'
         ];

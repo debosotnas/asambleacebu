@@ -27,9 +27,10 @@ const getStyles = ({ isMobile, isLogged }) => ({
         .alert-parent {
             position: absolute;
             top: 0;
-            left: 0;
+            left: 50%;
+            -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
             z-index: 100;
-            margin: 0 10px;
         }
     `,
     mainContainer: css`
@@ -39,7 +40,7 @@ const getStyles = ({ isMobile, isLogged }) => ({
         margin-bottom: 0;
         position: relative;
         background-color: unset;
-        border: 1px solid #ddd;
+        border: 2px solid #e0e0e0;
         background: url(${BgImageLogo}) bottom ${isMobile ? "center" : "right"}
             no-repeat;
         ${isMobile ? "background-size: 50%;" : ""}

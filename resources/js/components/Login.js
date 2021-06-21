@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { jsx, css } from "@emotion/react";
 import React, { useState } from "react";
+import VpnKeyIcon from "@material-ui/icons/VpnKey";
 
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
@@ -208,7 +209,7 @@ const Login = ({ makeLogin, dispatch }) => {
                                     css={{ marginTop: 20 }}
                                     variant="primary"
                                 >
-                                    Ingresar
+                                    Ingresar <VpnKeyIcon />
                                 </Button>
                             </Col>
                         </Row>

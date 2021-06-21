@@ -67,7 +67,7 @@ export const makeLogin = async (payload, dispatch) => {
         console.log("login correcto");
         result = await response.json();
         // console.log(result);
-        dispatch({ type: "TEST_TEST_", payload });
+        dispatch({ type: "TEST_TEST", payload });
         // dispatch({ type: "TEST_TEST", payload });
     } else {
         dispatch({
