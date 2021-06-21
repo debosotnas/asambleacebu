@@ -41,19 +41,26 @@ const makeStyles = ({ isMobile }) => ({
         right: 0;
     `,
     parentSpan: css`
-        margin-top: 10px;
+        margin-top: 0;
     `,
     blockSection: css`
         background-color: #a9e3ff;
         padding: 20px;
         margin: 10px 0;
+        border: 1px solid #68b1d4;
         /* min-height: ${isMobile ? "inherit" : "200"}px; */
     `,
-    blockSectionWithSpace: css`
-        background-color: #a9e3ff;
+    blockSectionVote: css`
+        background-color: #f7ebd7;
+        padding: 20px;
         margin: 10px 0;
-        min-height: ${isMobile ? "inherit" : "200"}px;
+        border: 1px solid #d2d468;
     `,
+    // blockSectionWithSpace: css`
+    //     background-color: #a9e3ff;
+    //     margin: 10px 0;
+    //     min-height: ${isMobile ? "inherit" : "200"}px;
+    // `,
     nextVotationBlock: css`
         margin-top: 20px;
     `,
@@ -70,7 +77,13 @@ const makeStyles = ({ isMobile }) => ({
         color: #001f77;
         span {
             color: #555;
+            display: ${isMobile ? "block" : "inline-block"};
         }
+    `,
+    sectionTitle: css`
+        font-size: 20px;
+        color: #2e6f8e;
+        font-weight: bold;
     `,
 });
 
@@ -127,7 +140,7 @@ const Home = ({ name, ci, email, phone, church, dispatch }) => {
                     <Container>
                         <Row css={styles.parentSpan}>
                             <Col css={isMobile ? styles.colItem : []}>
-                                <div>Mis datos:</div>
+                                <div css={styles.sectionTitle}>Mis datos:</div>
                                 <Jumbotron
                                     css={
                                         isMobile
@@ -169,20 +182,22 @@ const Home = ({ name, ci, email, phone, church, dispatch }) => {
                     </Container>
                     <Container css={styles.nextVotationBlock}>
                         <Row>
-                            <Col>
-                                <div>Votación disponible:</div>
+                            <Col css={isMobile ? styles.colItem : []}>
+                                <div css={styles.sectionTitle}>
+                                    Votación disponible:
+                                </div>
                             </Col>
                         </Row>
                         <Row>
-                            <Col>
+                            <Col css={isMobile ? styles.colItem : []}>
                                 <Jumbotron
                                     css={
                                         isMobile
                                             ? [
-                                                  styles.blockSection,
+                                                  styles.blockSectionVote,
                                                   styles.colItemJumbo,
                                               ]
-                                            : styles.blockSection
+                                            : styles.blockSectionVote
                                     }
                                 >
                                     <Vote />

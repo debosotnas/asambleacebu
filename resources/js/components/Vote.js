@@ -22,25 +22,16 @@ import { validateAccess } from "./helpers";
 
 const makeStyles = ({ isMobile }) => ({
     nextVotationBlock: css`
-        /* margin-top: 10px; */
+        .main-btn-container {
+            text-align: center;
+            padding: 0 15px;
+        }
     `,
     voteSection: css`
         position: relative;
-        .in-curse {
-            font-size: 20px;
-            color: #00a;
-            display: ${isMobile ? "block" : "inline"};
-            text-align: center;
-        }
-        .type {
-            font-size: 20px;
-            color: #00f;
-            display: ${isMobile ? "block" : "inline"};
-            text-align: center;
-        }
-        .time-curse {
+        .time-in-curse {
             font-size: 17px;
-            color: #00a;
+            color: #751252;
         }
         .global-time {
             ${!isMobile
@@ -49,7 +40,7 @@ const makeStyles = ({ isMobile }) => ({
         }
         .time {
             font-size: 17px;
-            color: #0aa;
+            color: #aa006e;
             font-weight: bold;
         }
     `,
@@ -79,6 +70,28 @@ const makeStyles = ({ isMobile }) => ({
     selName: css`
         color: #955;
     `,
+    highlightCurrVotation: css`
+        text-align: center;
+        margin: ${isMobile ? 0 : 35}px 10px 15px 10px;
+        background-color: #fbffe6;
+        padding: 3px;
+        border-radius: 5px;
+        border: 1px solid #d46868;
+
+        .in-curse {
+            font-size: 20px;
+            color: #af1111;
+            display: ${isMobile ? "block" : "inline"};
+            text-align: center;
+        }
+        .type {
+            font-size: 20px;
+            color: #af3232;
+            display: ${isMobile ? "block" : "inline"};
+            text-align: center;
+            font-weight: bold;
+        }
+    `,
 });
 
 const Vote = ({ opts, dispatch }) => {
@@ -86,9 +99,10 @@ const Vote = ({ opts, dispatch }) => {
     const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
     const styles = makeStyles({ isMobile });
 
-    const [selectedOption, setSelectedOption] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+
+    const [selectedOption, setSelectedOption] = useState(0);
     const [selectedName, setSelectedName] = useState("");
 
     const [fakeVoteScreen, setFakeVoteScreen] = useState(false);
@@ -152,29 +166,30 @@ const Vote = ({ opts, dispatch }) => {
     return (
         <>
             {!fakeVoteScreen ? (
-                <Container css={styles.nextVotationBlock}>
-                    <Row>
-                        <Col sm={12}>
-                            <Button
-                                onClick={() => {
-                                    handleEnterToVote();
-                                }}
-                                variant="primary"
-                            >
-                                Haga click aquí para ver la votación que está
-                                disponible <VisibilityIcon />
-                            </Button>
-                        </Col>
-                    </Row>
-                </Container>
+                <div css={styles.nextVotationBlock}>
+                    <div class="main-btn-container">
+                        <Button
+                            onClick={() => {
+                                handleEnterToVote();
+                            }}
+                            variant="primary"
+                        >
+                            Haga click aquí para ver la votación que está
+                            disponible <VisibilityIcon />
+                        </Button>
+                    </div>
+                </div>
             ) : (
                 <div css={styles.voteSection}>
                     <Container css={styles.nextVotationBlock}>
                         <Row>
                             <Col sm={12}>
-                                <span class="in-curse">Elección en curso:</span>{" "}
-                                <span class="type">Presidente</span>
-                                <br />
+                                <div css={styles.highlightCurrVotation}>
+                                    <span class="in-curse">
+                                        Elección en curso:
+                                    </span>{" "}
+                                    <span class="type">Presidente</span>
+                                </div>
                                 <div class="global-time">
                                     <span class="time-in-curse">
                                         Tiempo restante:
@@ -191,7 +206,7 @@ const Vote = ({ opts, dispatch }) => {
                             </Col>
                         </Row>
                         <Row>
-                            <Col sm={12} md={6}>
+                            <Col sm={12} md={6} css={["text-align: center;"]}>
                                 <ButtonGroup
                                     vertical
                                     css={styles.buttonGroupOpts}
@@ -234,14 +249,14 @@ const Vote = ({ opts, dispatch }) => {
                                     onClick={() => {
                                         handleConfirmAndVote();
                                     }}
-                                    disabled={isLoading}
+                                    disabled={isLoading || selectedOption === 0}
                                     variant="info"
                                     css={styles.sendVoteBtn}
                                 >
                                     {isLoading
-                                        ? "Enviando voto..."
+                                        ? "Enviando..."
                                         : `Confirmar selección
-                                    y enviar voto`}{" "}
+                                    y enviar`}{" "}
                                     <HowToVoteIcon />
                                 </Button>
                             </Col>

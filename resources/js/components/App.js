@@ -25,8 +25,8 @@ const getStyles = ({ isMobile, isLogged }) => ({
     parentContainer: css`
         position: relative;
         .alert-parent {
-            position: absolute;
-            top: 0;
+            position: fixed;
+            top: 5px;
             left: 50%;
             -webkit-transform: translateX(-50%);
             transform: translateX(-50%);
