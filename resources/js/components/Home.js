@@ -21,7 +21,9 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 
-import { validateAccess } from "./helpers";
+// import { validateAccess } from "./helpers";
+import Churches from "./churches";
+import Users from "./users";
 
 const makeStyles = ({ isMobile }) => ({
     header: css`
@@ -52,7 +54,11 @@ const makeStyles = ({ isMobile }) => ({
         padding: 10px;
         margin: 10px 0;
         border: 1px solid #e028d2;
+        .nav-link {
+            /* padding: 0.4rem 1rem; */
+        }
         .nav-item.nav-link {
+            font-size: 18px;
             background-color: #c28ccc;
             a {
                 color: #6505af;
@@ -66,6 +72,7 @@ const makeStyles = ({ isMobile }) => ({
         .nav-item.nav-link.active {
             background-color: #f4c0fd;
             border-color: #f4c0fd;
+            /* padding: 0.5rem 1rem; */
             a {
                 color: #a0109c;
             }
@@ -218,19 +225,19 @@ const Home = ({
                                             >
                                                 <Tab
                                                     eventKey="home"
-                                                    title="Iglesias y Usuarios"
+                                                    title="Iglesias"
                                                 >
-                                                    Test 1
+                                                    <Churches />
                                                 </Tab>
                                                 <Tab
                                                     eventKey="profile"
-                                                    title="Profile"
+                                                    title="Titulares"
                                                 >
-                                                    Test 2
+                                                    <Users />
                                                 </Tab>
                                                 <Tab
                                                     eventKey="contact"
-                                                    title="Contact"
+                                                    title="Elecciones"
                                                 >
                                                     Test 3
                                                 </Tab>

@@ -10,6 +10,6 @@ class Election extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'description', 'result', 'active'
+        'title', 'description', 'result', 'visible', 'active'
     ];
 }

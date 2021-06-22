@@ -107,3 +107,21 @@ Admin panel:
     - for each election list its options
 
 - 
+
+////////////////
+
+Pending for Elections:
+Add #2 secionts:
+- ABM: to add / modify / delete elections and its options
+- Listing: to see details about active-inactive elections
+
+TODO: 
+
+ABM:
+    - Create Election 
+    - Add options to Election
+    - Create button to on/off election (xxxxxx Add main button "Enable/disable votation" xxxxx)
+LIST:
+    - User logged
+    - Votes for church
+    - 

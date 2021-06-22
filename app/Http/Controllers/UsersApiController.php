@@ -14,8 +14,28 @@ class UsersApiController extends Controller
     }
 
     private function getRole($id) {
-        $arr_admins = array(1,2,3,4);
+        $arr_admins = array(1,10);
         return in_array($id, $arr_admins) ? 'admin' : 'user';
+    }
+
+    private function getChurches() {
+        $churchesDb = DB::table('churches')
+            ->select('id', 'name', 'members')
+            ->where('active', '=', true)
+            ->orderBy('name')
+            ->get();
+
+        $churches = array();
+
+        foreach ($churchesDb as $church) {
+            $tmp = [
+                'id' => $church->id,
+                'name' => $church->name,
+                'members' => $church->members
+            ] ;
+            array_push($churches, $tmp);
+        }
+        return $churches;
     }
 
     public function index(){
@@ -66,6 +86,34 @@ class UsersApiController extends Controller
         ];
     }
 
+    public function fromChurch($church) {
+        $uuu = array();
+
+        if ($church) {
+            $users = DB::table('users')
+                ->join('churches', 'users.church_id', '=', 'churches.id')
+                ->select('users.id', 'users.ci', 'users.name', 'users.email', 'users.phone', 'users.password')
+                ->where('churches.id', '=', $church)
+                ->where('churches.active', '=', true)
+                ->where('users.active', '=', true)
+                ->get();
+
+            foreach ($users as $user) {
+                $tmp = [
+                    'id' => $user->id,
+                    'ci' => $user->ci,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'phone' => $user->phone,
+                    'password' => $user->password,
+                ];
+                array_push($uuu, $tmp);
+            }
+                    
+        }
+        return $uuu;
+    }
+
     public function signin() {
         request()->validate([
             'ci' => 'required',
@@ -73,7 +121,7 @@ class UsersApiController extends Controller
         ]);
         $ci = request('ci');
         $cel = request('cel');
-        $email = request('email');
+        // $email = request('email');
         $code = request('code');
 
         $users = DB::table('users')
@@ -82,14 +130,15 @@ class UsersApiController extends Controller
             ->where('users.ci', '=', $ci)
             ->where('users.password', '=', $code)
             ->where('users.phone', '=', $cel)
-            ->where('users.email', '=', $email)
-            // ->first()
+            // ->where('users.email', '=', $email)
+            ->where('churches.active', '=', true)
             ->get();
 
         // response()->json($user);
 
         if (count($users)) {
             $firstUser = $users[0];
+            $role = $this->getRole($firstUser->id);
             $returnUser = [
                 'cid' => $firstUser->cid,
                 'cname' => $firstUser->cname,
@@ -98,10 +147,15 @@ class UsersApiController extends Controller
                 'id' => $firstUser->id,
                 'name' => $firstUser->name,
                 'phone' => $firstUser->phone,
-                'role' => $this->getRole($firstUser->id)
+                'role' => $role
             ];
 
             session(['cebuid' => md5($firstUser->cid . '-' . $firstUser->id . '-' . $code)]);
+            session(['user_id' => $firstUser->id]);
+
+            if($role === 'admin') {
+                $returnUser['churches'] = $this->getChurches();
+            }
 
             /*
             -
@@ -116,6 +170,7 @@ class UsersApiController extends Controller
         } else {
             $returnUser = [];
         }
+
 
         return $returnUser;
 

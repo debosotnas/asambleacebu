@@ -3,22 +3,33 @@ import {
     SET_LOGOUT,
     SHOW_GLOBAL_ALERT,
     HIDE_GLOBAL_ALERT,
+    UPDATE_CHURCHES_LIST,
+    UPDATE_USER_FROM_CHURCH,
 } from "./actionTypes";
 import { GLOBAL_ALERT_TYPES } from "./constants";
 
 const BASE_API_PATH = window.location.origin + "/api/";
 const USERS_API_PATH = "users";
+const CHURCHES_API_PATH = "churches";
 
 const baseFetch = ({ method, url, payload }) => {
-    return fetch(url, {
-        method,
-        cache: "no-cache",
-        headers: {
-            // Accept: "application/json",
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-    });
+    return method === "GET"
+        ? fetch(url, {
+              method,
+              cache: "no-cache",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+          })
+        : fetch(url, {
+              method,
+              cache: "no-cache",
+              headers: {
+                  // Accept: "application/json",
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify(payload),
+          });
 };
 
 const callFetchLogin = (payload) => {
@@ -29,29 +40,207 @@ const callFetchLogin = (payload) => {
     });
 };
 
-/*
-function callFetchLogin(payload) {
-    return get(Routes.fetchBankAccounts(payload));
-
-    fetch(url, options).then(response => {
-        
+const callFetchAddChurch = (payload) => {
+    return baseFetch({
+        url: BASE_API_PATH + CHURCHES_API_PATH,
+        method: "POST",
+        payload,
     });
-}
-
-const fetchLogin = (payload) => async (dispatch, getState) => {
-    const cards = await callFetchLogin(payload)
-        .then(result => {
-            if (result.status === 401) {
-                dispatch(setUnauthorizedError());
-            }
-            return result.status === 200 ? result.json() : Promise.reject();
-        })
-        .then(resultJson => resultJson.data)
-        .catch(() => []);
-
-    // dispatch(fetchCardsComplete(cards));
 };
-*/
+
+const callFetchDelChurch = (payload) => {
+    return baseFetch({
+        url: BASE_API_PATH + CHURCHES_API_PATH + "/del/" + payload.id,
+        method: "PUT",
+        payload,
+    });
+};
+
+const callFetchUpdateChurch = (payload) => {
+    return baseFetch({
+        url: BASE_API_PATH + CHURCHES_API_PATH + "/" + payload.id,
+        method: "PUT",
+        payload,
+    });
+};
+
+const callFetchGetUsersByChurch = (payload) => {
+    console.log(">>> !!");
+    return baseFetch({
+        url: BASE_API_PATH + USERS_API_PATH + "/from/" + payload.id,
+        method: "GET",
+    });
+};
+
+//==========================
+
+export const updateChurchesReducer = ({ churches, dispatch }) => {
+    dispatch({
+        type: UPDATE_CHURCHES_LIST,
+        payload: [...(churches && churches.length ? churches : [])],
+    });
+};
+
+export const loadUsersByChurch = async ({ payload, dispatch }) => {
+    const response = await callFetchGetUsersByChurch(payload);
+    if (response.status === 200 && response.redirected) {
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "Ocurrió un error al validar los datos enviados. Por favor verifica la información e intenta nuevamente",
+                code: response.status,
+                type: GLOBAL_ALERT_TYPES.ERROR,
+            },
+        });
+    } else if (response.status === 200) {
+        try {
+            const result = await response.json();
+            console.log(">>> RESULT - get users from church: ", result);
+            // updateChurchesReducer({ dispatch, churches: result.churches });
+            dispatch({ type: UPDATE_USER_FROM_CHURCH, payload: result });
+            dispatch({ type: HIDE_GLOBAL_ALERT });
+        } catch (e) {
+            dispatch({
+                type: SHOW_GLOBAL_ALERT,
+                payload: {
+                    msg: "Ocurrió un error al procesar la información",
+                    code: "559",
+                    type: GLOBAL_ALERT_TYPES.ERROR,
+                },
+            });
+            console.log("Error after try getUsersFromChurch! - Err: ", e);
+        }
+    } else {
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "Ocurrió un error al actualizar la iglesia. Por favor reintenta nuevamente",
+                code: response.status,
+                type: GLOBAL_ALERT_TYPES.ERROR,
+            },
+        });
+    }
+};
+
+export const makeUpdateChurch = async ({ payload, dispatch }) => {
+    const response = await callFetchUpdateChurch(payload);
+    if (response.status === 200 && response.redirected) {
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "Ocurrió un error al validar los datos enviados. Por favor verifica la información e intenta nuevamente",
+                code: response.status,
+                type: GLOBAL_ALERT_TYPES.ERROR,
+            },
+        });
+    } else if (response.status === 200) {
+        try {
+            const result = await response.json();
+            console.log(">>> RESULT - update Church: ", result);
+            updateChurchesReducer({ dispatch, churches: result.churches });
+            dispatch({ type: HIDE_GLOBAL_ALERT });
+        } catch (e) {
+            dispatch({
+                type: SHOW_GLOBAL_ALERT,
+                payload: {
+                    msg: "Ocurrió un error al procesar la información",
+                    code: "459",
+                    type: GLOBAL_ALERT_TYPES.ERROR,
+                },
+            });
+            console.log("Error after try makeUpdateChurck! - Err: ", e);
+        }
+    } else {
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "Ocurrió un error al actualizar la iglesia. Por favor reintenta nuevamente",
+                code: response.status,
+                type: GLOBAL_ALERT_TYPES.ERROR,
+            },
+        });
+    }
+};
+
+export const makeDelChurch = async ({ payload, dispatch }) => {
+    const response = await callFetchDelChurch(payload);
+    if (response.status === 200 && response.redirected) {
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "Ocurrió un error al validar los datos enviados. Por favor verifica la información e intenta nuevamente",
+                code: response.status,
+                type: GLOBAL_ALERT_TYPES.ERROR,
+            },
+        });
+    } else if (response.status === 200) {
+        try {
+            const result = await response.json();
+            console.log(">>> RESULT - delete Church: ", result);
+            updateChurchesReducer({ dispatch, churches: result.churches });
+            dispatch({ type: HIDE_GLOBAL_ALERT });
+        } catch (e) {
+            dispatch({
+                type: SHOW_GLOBAL_ALERT,
+                payload: {
+                    msg: "Ocurrió un error al procesar la información",
+                    code: "359",
+                    type: GLOBAL_ALERT_TYPES.ERROR,
+                },
+            });
+            console.log("Error after try makeDelChurck! - Err: ", e);
+        }
+    } else {
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "Ocurrió un error al eliminar la iglesia. Por favor reintenta nuevamente",
+                code: response.status,
+                type: GLOBAL_ALERT_TYPES.ERROR,
+            },
+        });
+    }
+};
+
+export const makeAddChurch = async ({ payload, dispatch }) => {
+    const response = await callFetchAddChurch(payload);
+    if (response.status === 200 && response.redirected) {
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "Ocurrió un error al validar los datos de entrada. Por favor verifica la información e intenta nuevamente",
+                code: response.status,
+                type: GLOBAL_ALERT_TYPES.ERROR,
+            },
+        });
+    } else if (response.status === 200) {
+        try {
+            const result = await response.json();
+            console.log(">>> RESULT - add Church: ", result);
+            updateChurchesReducer({ dispatch, churches: result.churches });
+            dispatch({ type: HIDE_GLOBAL_ALERT });
+        } catch (e) {
+            dispatch({
+                type: SHOW_GLOBAL_ALERT,
+                payload: {
+                    msg: "Ocurrió un error al procesar la información",
+                    code: "259",
+                    type: GLOBAL_ALERT_TYPES.ERROR,
+                },
+            });
+            console.log("Error after try makeAddChurck! - Err: ", e);
+        }
+    } else {
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "Ocurrió un error al agregar la iglesia. Por favor reintenta nuevamente",
+                code: response.status,
+                type: GLOBAL_ALERT_TYPES.ERROR,
+            },
+        });
+    }
+};
 
 export const makeLogout = async (dispatch) => {
     return dispatch({ type: SET_LOGOUT });
@@ -59,7 +248,6 @@ export const makeLogout = async (dispatch) => {
 
 export const makeLogin = async (payload, dispatch) => {
     const response = await callFetchLogin(payload);
-    let result;
     if (response.status === 200 && response.redirected) {
         dispatch({
             type: SHOW_GLOBAL_ALERT,
@@ -71,12 +259,13 @@ export const makeLogin = async (payload, dispatch) => {
         });
     } else if (response.status === 200) {
         try {
-            result = await response.json();
-            console.log(">>>>>>>>>>>>>>> result: ", result);
+            const result = await response.json();
+            // console.log(">>>>>>>>>>>>>>> result: ", result);
             if (result && result.id && result.cid) {
                 console.log(">>> RESULT: ", result);
                 dispatch({ type: HIDE_GLOBAL_ALERT });
                 dispatch({ type: SET_LOGGED_IN, payload: { ...result } });
+                updateChurchesReducer({ dispatch, churches: result.churches });
             } else {
                 dispatch({
                     type: SHOW_GLOBAL_ALERT,

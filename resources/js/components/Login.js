@@ -72,11 +72,14 @@ const Login = ({ makeLogin, dispatch }) => {
         //     return;
         // }
 
-        const email = document.querySelector("#email").value;
+        /*
+        // const email = document.querySelector("#email").value;
         // if (email && !validateEmail(email)) {
         //     console.log("Invalid Email");
         //     return;
         // }
+        */
+
         const cel = document.querySelector("#cel").value;
         // if (cel && !validateCel(cel)) {
         //     console.log("Invalid Cel");
@@ -96,7 +99,7 @@ const Login = ({ makeLogin, dispatch }) => {
         const payload = {
             ci,
             cel,
-            email,
+            // email,
             code,
         };
 
@@ -142,7 +145,7 @@ const Login = ({ makeLogin, dispatch }) => {
                                 <span css={styles.span}>
                                     C.I.{" "}
                                     <span css={styles.subnote}>
-                                        (sin puntos ni guiones)
+                                        (sin puntos ni guión)
                                     </span>
                                     :
                                 </span>
@@ -173,7 +176,7 @@ const Login = ({ makeLogin, dispatch }) => {
                                 ></input>
                             </Col>
                         </Row>
-                        <Row css={styles.parentSpan}>
+                        {/* <Row css={styles.parentSpan}>
                             <Col>
                                 <span css={styles.span}>E-mail:</span>
                                 <br />
@@ -183,7 +186,7 @@ const Login = ({ makeLogin, dispatch }) => {
                                     autoComplete="off"
                                 ></input>
                             </Col>
-                        </Row>
+                        </Row> */}
                         <Row css={styles.parentSpan}>
                             <Col>
                                 <span css={styles.span}>

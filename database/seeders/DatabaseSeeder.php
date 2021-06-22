@@ -125,12 +125,37 @@ class DatabaseSeeder extends Seeder
         DB::table('users')->insert([
             'church_id' => $id_c_3,
             'ci' => '123',
-            'name' => Str::random(10). ' '. Str::random(10),
-            'email' => 'asdf@gmail.com',
+            'name' => 'Test Testerson',
+            'email' => '123@asdf.com',
             'phone' => '123',
             'password' => '123',
             'active' => true,
         ]);
+
+        $el_1 = DB::table('elections')->insertGetId([
+            'title' => 'Presidente',
+            'description' => 'Ahora mismo estamos eligiendo Presidente',
+            'active' => '1',
+            'visible' => false,
+        ]);
+        $el_2 = DB::table('elections')->insertGetId([
+            'title' => 'Vicepresidente',
+            'description' => 'En este momento estamos eligiendo Vicepresidente',
+            'active' => '1',
+            'visible' => false,
+        ]);
+
+        DB::table('options')->insert([
+            'election_id' => $el_1,
+            'name' => 'Checho chimes',
+            'active' => '1',
+        ]);
+        DB::table('options')->insert([
+            'election_id' => $el_1,
+            'name' => 'Bonzo Belt',
+            'active' => '1',
+        ]);
+
 
         // DB::table('users')->insert([
         //     'church_id' => $id_c_1,

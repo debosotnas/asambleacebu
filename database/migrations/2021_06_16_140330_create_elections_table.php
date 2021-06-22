@@ -18,6 +18,7 @@ class CreateElectionsTable extends Migration
             $table->string('title');
             $table->string('description')->nullable();
             $table->string('result')->nullable();
+            $table->boolean('visible');
             $table->boolean('active');
             $table->timestamps();
         });

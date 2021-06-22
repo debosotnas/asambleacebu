@@ -10,6 +10,6 @@ class Church extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'members'
+        'name', 'members', 'active'
     ];
 }

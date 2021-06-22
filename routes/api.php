@@ -26,17 +26,21 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// add church
+Route::post('/churches', [ChurchesApiController::class, 'store']);
+Route::put('/churches/del/{church}', [ChurchesApiController::class, 'softDelete']);
+Route::put('/churches/{church}', [ChurchesApiController::class, 'update']);
 /*
 Route::get('/churches', [ChurchesApiController::class, 'index']);
-Route::post('/churches', [ChurchesApiController::class, 'store']);
-Route::put('/churches/{church}', [ChurchesApiController::class, 'update']);
 Route::delete('/churches/{church}', [ChurchesApiController::class, 'destroy']);
+
 
 Route::get('/users', [UsersApiController::class, 'index']);
 Route::post('/users', [UsersApiController::class, 'store']);
 Route::put('/users/{user}', [UsersApiController::class, 'update']);
 Route::delete('/users/{user}', [UsersApiController::class, 'destroy']);
 */
+Route::get('/users/from/{church}', [UsersApiController::class, 'fromChurch']);
 Route::post('/users/signin', [UsersApiController::class, 'signin']);
 
 // get available elections

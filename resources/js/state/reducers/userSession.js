@@ -17,8 +17,6 @@ const initialState = {
 const userSession = (state = initialState, action) => {
     switch (action.type) {
         case SET_LOGGED_IN: {
-            console.log(">>> action: ", action);
-            // const { id: userId, role, info } = action.payload;
             const {
                 ci,
                 cid: churchId,
