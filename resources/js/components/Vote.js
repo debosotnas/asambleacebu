@@ -8,7 +8,7 @@ import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 import { connect } from "react-redux";
-import { makeLogout } from "../state/actions";
+import { checkSomethingToVote, makeSendVote } from "../state/actions";
 
 import Modal from "react-bootstrap/Modal";
 import Jumbotron from "react-bootstrap/Jumbotron";
@@ -34,7 +34,7 @@ const makeStyles = ({ isMobile }) => ({
         .global-time {
             ${!isMobile
                 ? "display: block; position: absolute; top: 0; right: 0;"
-                : "text-align: center; margin-bottom: 15px;"}
+                : "text-align: right; margin-bottom: 15px;"}
         }
         .time {
             font-size: 17px;
@@ -70,7 +70,8 @@ const makeStyles = ({ isMobile }) => ({
     `,
     highlightCurrVotation: css`
         text-align: center;
-        margin: ${isMobile ? 0 : 35}px 10px 15px 10px;
+        margin: ${isMobile ? 0 : 45}px 10px 15px 10px;
+        /* margin: ${isMobile ? 0 : 5}px 10px 15px 10px; */
         background-color: #fbffe6;
         padding: 3px;
         border-radius: 5px;
@@ -80,6 +81,12 @@ const makeStyles = ({ isMobile }) => ({
             font-size: 20px;
             color: #af1111;
             display: ${isMobile ? "block" : "inline"};
+            text-align: center;
+        }
+        .desc-in-curse {
+            font-size: 15px;
+            color: #af6677;
+            /* display: ${isMobile ? "block" : "inline"}; */
             text-align: center;
         }
         .type {
@@ -92,7 +99,15 @@ const makeStyles = ({ isMobile }) => ({
     `,
 });
 
-const Vote = ({ opts, dispatch }) => {
+const Vote = ({
+    currElection,
+    isSomethingToVote,
+    opts,
+    userId,
+    checkSomethingToVote,
+    makeSendVote,
+    dispatch,
+}) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
     const styles = makeStyles({ isMobile });
@@ -103,92 +118,130 @@ const Vote = ({ opts, dispatch }) => {
     const [selectedOption, setSelectedOption] = useState(0);
     const [selectedName, setSelectedName] = useState("");
 
-    const [fakeVoteScreen, setFakeVoteScreen] = useState(false);
+    const [showFakeVoteScreen, setShowFakeVoteScreen] = useState(false);
 
-    let [countClock, setClockCount] = useState(59);
+    const [isCheckingVote, setIsCheckingVote] = useState(false);
 
-    const makeMoveClock = (sec) => {
-        console.log("MoveClock!!");
-        setClockCount(sec);
-        if (sec > 0) {
-            setTimeout(() => {
-                makeMoveClock(sec - 1);
-            }, 1000);
-        }
+    // let [countClock, setClockCount] = useState(59); --time
+    // const makeMoveClock = (sec) => {
+    //     console.log("MoveClock!!");
+    //     setClockCount(sec);
+    //     if (sec > 0) {
+    //         setTimeout(() => {
+    //             makeMoveClock(sec - 1);
+    //         }, 1000);
+    //     }
+    // };
+
+    const handleExitNoVote = async () => {
+        setShowFakeVoteScreen(false);
     };
 
-    const handleEnterToVote = () => {
-        setTimeout(() => {
-            makeMoveClock(59);
-        }, 1000);
-        setFakeVoteScreen(true);
+    const handleEnterToVote = async () => {
+        // setTimeout(() => { --time
+        //     makeMoveClock(59);
+        // }, 1000);
+
+        setIsCheckingVote(true);
+        setTimeout(async () => {
+            try {
+                await checkSomethingToVote({ dispatch });
+                setShowFakeVoteScreen(true);
+            } catch (e) {
+                console.log("Error trying to get something to Vote - Err: ", e);
+            } finally {
+                setIsCheckingVote(false);
+            }
+        }, 1);
+        // }, 1000);
     };
+
+    const isAPerson = (p) => {
+        return !(
+            String(p).indexOf("abstenc") > -1 ||
+            String(p).indexOf("en blan") > -1
+        );
+    };
+
     const handleConfirmAndVote = () => {
         if (isLoading) {
             console.log("isLoading!!");
             return;
-        } else if (selectedOption === "abs") {
+        } else if (!isAPerson(selectedOption)) {
             setShowConfirm(true);
         } else {
             const option = opts.find((i) => i.id === selectedOption);
-            console.log(opts, option);
-            if (option && option.id && option.value) {
+            // console.log(opts, option);
+            if (option && option.id && option.name) {
                 setShowConfirm(true);
             }
         }
     };
+
     const handleSelectOption = (id) => {
-        console.log("seleccion > ", id);
+        // console.log("seleccion > ", id);
         setSelectedOption(id);
-        if (id !== "abs") {
-            const abc = opts.find((i) => i.id === id) || {};
-            setSelectedName(abc.value ? abc.value : "");
-        } else {
-            setSelectedName("abs");
-        }
+        const abc = opts.find((i) => i.id === id) || {};
+        setSelectedName(abc.name ? abc.name.split("_").join("") : "");
     };
+
     const handleCloseConfirm = () => {
         setShowConfirm(false);
     };
-    const handleSendVote = () => {
+
+    const handleSendVote = async () => {
         setShowConfirm(false);
         setIsLoading(true);
-        setTimeout(() => {
+
+        // setTimeout(async () => {}, 1);
+        try {
+            // console.log(currElection, selectedOption);
+            const payload = {
+                election_id: currElection.id,
+                option_id: selectedOption,
+                user_id: userId,
+            };
+            await makeSendVote({ dispatch, payload });
+        } catch (e) {
+            console.log("error sending vote, please try again - Err: ", e);
+        } finally {
             setIsLoading(false);
             setSelectedName("");
             setSelectedOption(0);
-            setFakeVoteScreen(false);
-        }, 2000);
+            setShowFakeVoteScreen(false);
+        }
     };
 
     return (
         <>
-            {!fakeVoteScreen ? (
-                <div css={styles.nextVotationBlock}>
-                    <div class="main-btn-container">
-                        <Button
-                            onClick={() => {
-                                handleEnterToVote();
-                            }}
-                            variant="primary"
-                        >
-                            Haga click aquí para ver la votación que está
-                            disponible <VisibilityIcon />
-                        </Button>
-                    </div>
-                </div>
-            ) : (
+            {showFakeVoteScreen && isSomethingToVote ? (
                 <div css={styles.voteSection}>
                     <Container css={styles.nextVotationBlock}>
                         <Row>
                             <Col sm={12}>
+                                <div class="global-time">
+                                    <Button
+                                        onClick={() => {
+                                            handleExitNoVote();
+                                        }}
+                                        variant="danger"
+                                        size="sm"
+                                    >
+                                        [x] Salir sin votar
+                                    </Button>
+                                </div>
                                 <div css={styles.highlightCurrVotation}>
                                     <span class="in-curse">
                                         Elección en curso:
                                     </span>{" "}
-                                    <span class="type">Presidente</span>
+                                    <span class="type">
+                                        {currElection.title}
+                                    </span>
+                                    <div class="desc-in-curse">
+                                        {currElection.description}
+                                    </div>
                                 </div>
-                                <div class="global-time">
+                                {/* --time <div class="global-time">
                                     <span class="time-in-curse">
                                         Tiempo restante:
                                     </span>{" "}
@@ -200,7 +253,7 @@ const Vote = ({ opts, dispatch }) => {
                                                 : `0${countClock}`
                                             : "00"}
                                     </span>
-                                </div>
+                                </div> */}
                             </Col>
                         </Row>
                         <Row>
@@ -209,10 +262,10 @@ const Vote = ({ opts, dispatch }) => {
                                     vertical
                                     css={styles.buttonGroupOpts}
                                 >
-                                    {opts.map(({ id, value }) => {
+                                    {opts.map(({ id, name }) => {
                                         return (
                                             <Button
-                                                key={`${id}-${value}`}
+                                                key={`${id}-${name}`}
                                                 onClick={() => {
                                                     handleSelectOption(id);
                                                 }}
@@ -223,23 +276,10 @@ const Vote = ({ opts, dispatch }) => {
                                                         : "btn btn-secondary"
                                                 }
                                             >
-                                                {value}
+                                                {name.split("_").join("")}
                                             </Button>
                                         );
                                     })}
-                                    <Button
-                                        onClick={() => {
-                                            handleSelectOption("abs");
-                                        }}
-                                        class={
-                                            selectedOption === "abs"
-                                                ? "curr-selected btn btn-secondary"
-                                                : "btn btn-secondary"
-                                        }
-                                        variant="secondary"
-                                    >
-                                        Abstención
-                                    </Button>
                                 </ButtonGroup>
                             </Col>
                             <Col sm={12} md={6} css={styles.actionVoteSection}>
@@ -261,19 +301,42 @@ const Vote = ({ opts, dispatch }) => {
                         </Row>
                     </Container>
                 </div>
+            ) : (
+                <div css={styles.nextVotationBlock}>
+                    <div class="main-btn-container">
+                        <Button
+                            onClick={() => {
+                                handleEnterToVote();
+                            }}
+                            variant="primary"
+                            disabled={isCheckingVote}
+                        >
+                            {isCheckingVote ? (
+                                "Cargando info..."
+                            ) : (
+                                <span>
+                                    {" "}
+                                    Haga click aquí para ver la votación que
+                                    está disponible
+                                    {/* <VisibilityIcon /> */}
+                                </span>
+                            )}
+                        </Button>
+                    </div>
+                </div>
             )}
             <Modal show={showConfirm} centered onHide={handleCloseConfirm}>
                 <Modal.Header closeButton>
                     <Modal.Title>Enviar voto</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {selectedName !== "abs" ? (
+                    {isAPerson(selectedName) ? (
                         <div>
                             ¿Enviar voto por{" "}
                             <span css={styles.selName}>{selectedName}</span>?
                         </div>
                     ) : (
-                        <div>¿Enviar abstención?</div>
+                        <div>¿Enviar {selectedName.split("_").join("")}?</div>
                     )}
                 </Modal.Body>
                 <Modal.Footer>
@@ -290,22 +353,25 @@ const Vote = ({ opts, dispatch }) => {
 };
 const VoteConnected = connect(
     (state) => {
-        //Todo: uncomment later
-        // const { name, ci, email, phone, church } =
-        //     (state.userSession && state.userSession.info) || {};
-
-        const opts = [
-            { id: 1, value: "Nombre1 Apellido1 (Opción #1)" },
-            { id: 2, value: "Nombre2 Apellido2 (Opción #2)" },
-            { id: 3, value: "Nombre3 Apellido3 (Opción #3)" },
-        ];
+        const isSomethingToVote =
+            state.votesInfo.readyToVote &&
+            state.votesInfo.readyToVote.id &&
+            !state.votesInfo.readyToVote.alreadyVote;
+        let opts = [];
+        if (isSomethingToVote) {
+            opts.push(...state.votesInfo.readyToVote.opts);
+        }
+        const userId = state.userSession.userId;
 
         return {
+            isSomethingToVote,
+            currElection: state.votesInfo.readyToVote,
+            userId,
             opts,
         };
     },
     (dispatch) => {
-        return { makeLogout, dispatch };
+        return { checkSomethingToVote, makeSendVote, dispatch };
     }
 )(Vote);
 

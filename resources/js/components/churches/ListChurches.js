@@ -229,7 +229,7 @@ const ListChurches = ({
                 </Modal.Header>
                 <Modal.Body>
                     <div>
-                        ¿Confirma eliminar la iglesia y todos sus miembros?
+                        ¿Confirma eliminar la iglesia y todos sus titulares?
                     </div>
                 </Modal.Body>
                 <Modal.Footer>

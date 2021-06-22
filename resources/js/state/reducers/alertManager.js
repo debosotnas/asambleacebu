@@ -14,7 +14,7 @@ const alertManager = (state = initialState, action) => {
             const { msg, code, type, withTime = false } = action.payload;
             return {
                 showGlobalAlert: true,
-                msgAlert: `${msg} (code: ${code})`,
+                msgAlert: `${msg} ${code ? `(code: ${code})` : ""}`,
                 typeAlert: type,
                 withTime,
             };

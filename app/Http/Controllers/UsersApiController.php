@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class UsersApiController extends Controller
 {
@@ -150,11 +151,13 @@ class UsersApiController extends Controller
                 'role' => $role
             ];
 
-            session(['cebuid' => md5($firstUser->cid . '-' . $firstUser->id . '-' . $code)]);
-            session(['user_id' => $firstUser->id]);
+            // session(['cebuid' => md5($firstUser->cid . '-' . $firstUser->id . '-' . $code)]);
+            // session(['user_id' => $firstUser->id]);
+            Session::put('user_id', $firstUser->id);
 
             if($role === 'admin') {
                 $returnUser['churches'] = $this->getChurches();
+                $returnUser['idSession'] = Session::get('user_id');
             }
 
             /*

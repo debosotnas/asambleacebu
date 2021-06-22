@@ -45,6 +45,8 @@ Route::post('/users/signin', [UsersApiController::class, 'signin']);
 
 // get available elections
 Route::get('/elections', [ElectionsApiController::class, 'index']);
+// get available elections to vote
+Route::get('/elections/ready', [ElectionsApiController::class, 'getReady']);
 /*
 Route::post('/elections', [ElectionsApiController::class, 'store']);
 Route::put('/elections/{election}', [ElectionsApiController::class, 'update']);
@@ -56,8 +58,11 @@ Route::put('/options/{option}', [OptionsApiController::class, 'update']);
 Route::delete('/options/{option}', [OptionsApiController::class, 'destroy']);
 
 Route::get('/votes', [VotesApiController::class, 'index']);
-Route::post('/votes', [VotesApiController::class, 'store']);
 //TODO: remove/disable Edit and Delete vote
 Route::put('/votes/{vote}', [VotesApiController::class, 'update']);
 Route::delete('/votes/{vote}', [VotesApiController::class, 'destroy']);
 */
+// get available elections/votes
+Route::get('/votes', [VotesApiController::class, 'index']);
+// make vote
+Route::post('/votes', [VotesApiController::class, 'store']);

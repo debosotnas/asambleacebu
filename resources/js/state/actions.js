@@ -5,14 +5,18 @@ import {
     HIDE_GLOBAL_ALERT,
     UPDATE_CHURCHES_LIST,
     UPDATE_USER_FROM_CHURCH,
+    UPDATE_READY_TO_VOTE,
+    RESET_READY_TO_VOTE,
 } from "./actionTypes";
 import { GLOBAL_ALERT_TYPES } from "./constants";
 
 const BASE_API_PATH = window.location.origin + "/api/";
 const USERS_API_PATH = "users";
 const CHURCHES_API_PATH = "churches";
+const ELECTIONS_API_PATH = "elections";
+const VOTES_API_PATH = "votes";
 
-const baseFetch = ({ method, url, payload }) => {
+const baseFetch = ({ method, url, payload = {} }) => {
     return method === "GET"
         ? fetch(url, {
               method,
@@ -65,11 +69,104 @@ const callFetchUpdateChurch = (payload) => {
 };
 
 const callFetchGetUsersByChurch = (payload) => {
-    console.log(">>> !!");
     return baseFetch({
         url: BASE_API_PATH + USERS_API_PATH + "/from/" + payload.id,
         method: "GET",
     });
+};
+
+//===========================
+
+const preBaseFetch = async (dispatch, params = {}) => {
+    const response = await baseFetch(params);
+    if (response.status === 200 && response.redirected) {
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "Ocurrió un error al obtener los datos. Por favor intenta nuevamente",
+                code: response.status,
+                type: GLOBAL_ALERT_TYPES.ERROR,
+            },
+        });
+    } else if (response.status === 200) {
+        try {
+            return response.json();
+            // return await response.json();
+        } catch (e) {
+            dispatch({
+                type: SHOW_GLOBAL_ALERT,
+                payload: {
+                    msg: "Ocurrió un error al procesar la info, por favor reintenta nuevamente. Si el problema persiste, consulta con el administrador",
+                    code: "X59",
+                    type: GLOBAL_ALERT_TYPES.ERROR,
+                },
+            });
+            console.log("Error after try process json! - Err: ", e);
+        }
+    } else {
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "Ocurrió un error al intentar obtener la info. Por favor reintenta nuevamente",
+                code: response.status,
+                type: GLOBAL_ALERT_TYPES.ERROR,
+            },
+        });
+    }
+};
+
+const callFetchSomethingToVote = async (dispatch) => {
+    dispatch({ type: RESET_READY_TO_VOTE });
+    dispatch({ type: HIDE_GLOBAL_ALERT });
+    const data = await preBaseFetch(dispatch, {
+        url: BASE_API_PATH + ELECTIONS_API_PATH + "/ready",
+        method: "GET",
+    });
+    if (data && data.length) {
+        dispatch({ type: HIDE_GLOBAL_ALERT });
+        dispatch({ type: UPDATE_READY_TO_VOTE, payload: { ...data[0] } });
+    } else {
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "No existen votaciones activas. Por favor espera hasta que el moderador lo indique.",
+                // code: "057",
+                type: GLOBAL_ALERT_TYPES.INFO,
+                withTime: false,
+            },
+        });
+    }
+};
+
+const callFetchSendVote = async (dispatch, payload) => {
+    const data = await preBaseFetch(dispatch, {
+        url: BASE_API_PATH + VOTES_API_PATH,
+        method: "POST",
+        payload,
+    });
+    if (data && data.length) {
+        // dispatch({ type: HIDE_GLOBAL_ALERT });
+        dispatch({ type: UPDATE_READY_TO_VOTE, payload: { ...data[0] } });
+        // dispatch({ type: HIDE_GLOBAL_ALERT });
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "Voto registrado con éxito.",
+                type: GLOBAL_ALERT_TYPES.SUCCESS,
+                withTime: 7000,
+            },
+        });
+    } else {
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "El voto fue registrado. Sin embargo ha ocurrido un error al traer la última información.",
+                code: "057",
+                type: GLOBAL_ALERT_TYPES.INFO,
+                withTime: false,
+            },
+        });
+    }
 };
 
 //==========================
@@ -260,7 +357,7 @@ export const makeLogin = async (payload, dispatch) => {
     } else if (response.status === 200) {
         try {
             const result = await response.json();
-            // console.log(">>>>>>>>>>>>>>> result: ", result);
+
             if (result && result.id && result.cid) {
                 console.log(">>> RESULT: ", result);
                 dispatch({ type: HIDE_GLOBAL_ALERT });
@@ -298,4 +395,12 @@ export const makeLogin = async (payload, dispatch) => {
             },
         });
     }
+};
+
+export const checkSomethingToVote = async ({ dispatch }) => {
+    const response = await callFetchSomethingToVote(dispatch);
+};
+
+export const makeSendVote = async ({ dispatch, payload }) => {
+    const response = await callFetchSendVote(dispatch, payload);
 };

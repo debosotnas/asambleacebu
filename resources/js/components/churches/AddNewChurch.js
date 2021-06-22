@@ -75,11 +75,21 @@ const AddNewChurch = ({ makeAddChurch, dispatch }) => {
             <div>
                 <div>Nombre:</div>
                 <div>
-                    <input type="text" id="churchName" />
+                    <input
+                        name="name"
+                        type="text"
+                        id="churchName"
+                        autoComplete="off"
+                    />
                 </div>
                 <div>Número de Titulares:</div>
                 <div>
-                    <input type="text" id="churchMembers" />
+                    <input
+                        name="members"
+                        type="text"
+                        id="churchMembers"
+                        autoComplete="off"
+                    />
                 </div>
                 <div css={styles.addChurchesBtnCnt}>
                     <Button

@@ -4,9 +4,73 @@ namespace App\Http\Controllers;
 
 use App\Models\Vote;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
 
 class VotesApiController extends Controller
 {
+
+    private function userAlreadyVoted($election_id) {
+        $user_id = Session::get('user_id');
+
+        $votes = DB::table('votes')
+            // ->join('churches', 'users.church_id', '=', 'churches.id')
+            ->select('votes.id', 'votes.election_id', 'votes.option_id')
+            ->where('votes.election_id', '=', $election_id)
+            ->where('votes.user_id', '=', $user_id)
+            ->get();
+
+        return count($votes) > 0;
+    }
+/*
+    private function getOptions($election_id) {
+        $opts = DB::table('options')
+            ->select('id', 'name')
+            ->where('election_id', '=', $election_id)
+            ->where('active', '=', true)
+            ->orderBy('name')
+            ->get();
+
+        $options = array();
+
+        foreach ($opts as $opt) {
+            $tmp = [
+                'id' => $opt->id,
+                'name' => $opt->name
+            ] ;
+            array_push($options, $tmp);
+        }
+        return $options;
+    }
+*/
+    private function getReady(){
+        $elections = DB::table('elections')
+            ->select('elections.id', 'elections.title', 'elections.description')
+            ->where('elections.visible', '=', true)
+            ->where('elections.active', '=', true)
+            ->get();
+
+        $uuu = array();
+
+        foreach ($elections as $election) {
+            // $opts = $this->getOptions($election->id);
+            $alreadyVote = $this->userAlreadyVoted($election->id);
+
+            $tmp = [
+                'id' => $election->id,
+                'title' => $election->title,
+                'description' => $election->description,
+                'alreadyVote' => $alreadyVote,
+                'idSession' => session('user_id'),
+                // 'opts' => $opts,
+            ];
+            array_push($uuu, $tmp);
+        }
+
+        return $uuu;
+    }
+
+
     public function index(){
         return Vote::all();
     }
@@ -16,12 +80,25 @@ class VotesApiController extends Controller
             'option_id' => 'required',
             'user_id' => 'required'
         ]);
-        return Vote::create([
+        if (Session::get('user_id') != request('user_id')) {
+            return ['error' => 'Authorization error'];
+        }
+
+        if ($this->userAlreadyVoted(request('election_id'))) {
+            return ['error' => 'User has an existing vote for: '. request('election_id')];
+        }
+
+        Vote::create([
             'election_id' => request('election_id'),
             'option_id' => request('option_id'),
-            'user_id' => request('user_id')
+            'user_id' => request('user_id'),
+            'active' => true
         ]);
+
+        return $this->getReady();
+        // return app('App\Http\Controller\ElectionsApiController')->getReady();
     }
+
     public function update(Vote $vote){
         request()->validate([
             'election_id' => 'required',

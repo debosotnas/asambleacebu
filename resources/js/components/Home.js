@@ -140,8 +140,8 @@ const Home = ({
     const styles = makeStyles({ isMobile });
 
     const [showConfirm, setShowConfirm] = useState(false);
-    // const [showAdminPanel, setShowAdminPanel] = useState(false); // by default, admin panel is hidden
-    const [showAdminPanel, setShowAdminPanel] = useState(true);
+    const [showAdminPanel, setShowAdminPanel] = useState(false); // by default, admin panel is hidden
+    // const [showAdminPanel, setShowAdminPanel] = useState(true);
 
     const handleAdminOnOff = () => {
         setShowAdminPanel(!showAdminPanel);
