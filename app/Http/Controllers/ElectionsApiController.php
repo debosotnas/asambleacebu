@@ -151,4 +151,41 @@ class ElectionsApiController extends Controller
         return $this->getElections();
     }
 
+    public function getGeneralResults($election) {
+/*
+
+        $users = DB::table('users')
+        ->join('churches', 'users.church_id', '=', 'churches.id')
+        ->select('users.id', 'users.ci', 'users.name', 'users.email', 'users.phone', 'users.password')
+        ->where('churches.id', '=', $church)
+
+
+        */
+
+
+
+        $counter = DB::table('votes')
+            ->join('options', 'votes.option_id', '=', 'options.id')
+            ->select('options.name', 'votes.option_id', DB::raw('count(*) as total'))
+            ->where('votes.election_id', '=', $election)
+            ->groupBy('votes.option_id')
+            ->get();
+
+        // $votes = DB::table('votes')
+        //     ->select('votes.id', 'votes.election_id', 'votes.option_id')
+        //     ->where('votes.election_id', '=', $election)
+        //     ->groupBy('votes.option_id')
+        //     ->count();
+            // ->where('votes.user_id', '=', $user_id)
+            // ->get();
+
+        return [
+            'totals' => $counter
+        ];
+            
+
+        // return count($votes) > 0;
+
+    }
+
 }

@@ -55,6 +55,7 @@ const makeStyles = ({ isMobile }) => ({
             /* border: 1px solid #0050f0; */
 
             .dyn-row {
+                font-size: 14px;
                 .l-col {
                     text-align: left;
                 }
@@ -238,48 +239,59 @@ const ListChurches = ({
                 <Container>
                     <Row>
                         <Col xs={7}>
-                            <span class="title-list">
-                                Nombre (Cel) - Código{" "}
-                            </span>
+                            <span class="title-list">Nombre (Cel)</span>
                         </Col>
-                        <Col xs={5}></Col>
+                        <Col xs={2}>
+                            <span class="title-list">Código</span>
+                        </Col>
+                        <Col xs={3}></Col>
                     </Row>
                 </Container>
                 <div class="list-churches-block-content">
                     <Container>
-                        {usersByChurch.map((c) => {
-                            return (
-                                <div class="dyn-row">
-                                    <Row>
-                                        <Col xs={7}>
-                                            <div class="l-col">
-                                                {c.name} ({c.password})
-                                            </div>
-                                        </Col>
-                                        <Col xs={5}>
-                                            <div class="r-col">
-                                                <button
-                                                    onClick={() => {
-                                                        handleUpdateChurch(c);
-                                                    }}
-                                                    class="btn-ac"
-                                                >
-                                                    <EditIcon />
-                                                </button>
-                                                <button
-                                                    onClick={() => {
-                                                        handleDelChurch(c.id);
-                                                    }}
-                                                    class="btn-ac"
-                                                >
-                                                    <DeleteIcon />
-                                                </button>
-                                            </div>
-                                        </Col>
-                                    </Row>
-                                </div>
-                            );
-                        })}
+                        {usersByChurch.users &&
+                            usersByChurch.users.map((c) => {
+                                return (
+                                    <div class="dyn-row">
+                                        <Row>
+                                            <Col xs={7}>
+                                                <div class="l-col">
+                                                    {c.name} ({c.phone})
+                                                </div>
+                                            </Col>
+                                            <Col xs={2}>
+                                                <div class="l-col">
+                                                    {c.password}
+                                                </div>
+                                            </Col>
+                                            <Col xs={3}>
+                                                <div class="r-col">
+                                                    <button
+                                                        onClick={() => {
+                                                            handleUpdateChurch(
+                                                                c
+                                                            );
+                                                        }}
+                                                        class="btn-ac"
+                                                    >
+                                                        <EditIcon />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => {
+                                                            handleDelChurch(
+                                                                c.id
+                                                            );
+                                                        }}
+                                                        class="btn-ac"
+                                                    >
+                                                        <DeleteIcon />
+                                                    </button>
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                    </div>
+                                );
+                            })}
                     </Container>
                 </div>
             </div>
@@ -375,7 +387,7 @@ const ListChurches = ({
 const ListChurchesConnected = connect(
     (state) => {
         return {
-            usersByChurch: state.churchesInfo.usersByChurch || [],
+            usersByChurch: state.churchesInfo.usersByChurch || {},
         };
     },
     (dispatch) => {

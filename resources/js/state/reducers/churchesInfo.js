@@ -2,7 +2,7 @@ import { UPDATE_CHURCHES_LIST, UPDATE_USER_FROM_CHURCH } from "../actionTypes";
 
 const initialState = {
     churches: [],
-    usersByChurch: [],
+    usersByChurch: null,
 };
 
 const userSession = (state = initialState, action) => {
@@ -14,13 +14,22 @@ const userSession = (state = initialState, action) => {
                         ? action.payload
                         : []),
                 ],
-                usersByChurch: [...state.usersByChurch],
+                usersByChurch: { ...(state.usersByChurch || {}) },
             };
         }
         case UPDATE_USER_FROM_CHURCH: {
             return {
                 churches: [...state.churches],
-                usersByChurch: [...action.payload],
+                usersByChurch: {
+                    churchId: action.payload && action.payload.church_id,
+                    users: [
+                        ...(action.payload &&
+                        action.payload.users &&
+                        action.payload.users.length
+                            ? action.payload.users
+                            : []),
+                    ],
+                },
             };
         }
         default: {

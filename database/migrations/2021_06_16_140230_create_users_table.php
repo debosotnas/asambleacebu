@@ -18,10 +18,13 @@ class CreateUsersTable extends Migration
             $table->foreignId('church_id')->constrained('churches');
             $table->string('ci')->unique();
             $table->string('name');
-            $table->string('email')->unique()->nullable();
+            // $table->string('email')->unique()->nullable();
+            $table->string('email')->nullable();
             $table->string('phone')->unique()->nullable();
             $table->string('password');
             $table->boolean('active');
+            $table->timestamp('lastlogin')->nullable();
+            $table->timestamp('lastaction')->nullable();
             $table->timestamps();
         });
     }

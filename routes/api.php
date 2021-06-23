@@ -49,6 +49,10 @@ Route::post('/users/signin', [UsersApiController::class, 'signin']);
 Route::get('/elections', [ElectionsApiController::class, 'index']);
 // get available elections to vote
 Route::get('/elections/ready', [ElectionsApiController::class, 'getReady']);
+
+// get STATS / GENERAL_RESULTS
+Route::get('/elections/general/{election}', [ElectionsApiController::class, 'getGeneralResults']);
+
 // soft delete election
 Route::put('/elections/del/{election}', [ElectionsApiController::class, 'softDelete']);
 

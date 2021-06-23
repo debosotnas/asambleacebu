@@ -25,6 +25,7 @@ import Button from "react-bootstrap/Button";
 import Churches from "./churches";
 import Users from "./users";
 import Elections from "./elections";
+import Results from "./results";
 
 const makeStyles = ({ isMobile }) => ({
     header: css`
@@ -242,6 +243,12 @@ const Home = ({
                                                     title="Elecciones"
                                                 >
                                                     <Elections />
+                                                </Tab>
+                                                <Tab
+                                                    eventKey="results"
+                                                    title="Resultados"
+                                                >
+                                                    <Results />
                                                 </Tab>
                                             </Tabs>
                                         </Jumbotron>

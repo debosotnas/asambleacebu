@@ -5,6 +5,7 @@ import churchesInfo from "./churchesInfo";
 import votesInfo from "./votesInfo";
 import electionsInfo from "./electionsInfo";
 import optionsInfo from "./optionsInfo";
+import resultsInfo from "./resultsInfo";
 
 export default combineReducers({
     userSession,
@@ -13,4 +14,5 @@ export default combineReducers({
     votesInfo,
     electionsInfo,
     optionsInfo,
+    resultsInfo,
 });

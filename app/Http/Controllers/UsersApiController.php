@@ -158,7 +158,7 @@ class UsersApiController extends Controller
             }
                     
         }
-        return $uuu;
+        return ['church_id' => $church, 'users' => $uuu];
     }
 
     public function signin() {

@@ -9,6 +9,7 @@ import {
     RESET_READY_TO_VOTE,
     LIST_ALL_ELECTIONS,
     LIST_ALL_OPTIONS,
+    UPDATE_GENERAL_RESULTS,
 } from "./actionTypes";
 import { GLOBAL_ALERT_TYPES } from "./constants";
 
@@ -519,7 +520,7 @@ export const makeAddUser = async ({ dispatch, payload }) => {
         method: "POST",
         payload,
     });
-    if (data && data.length) {
+    if (data && data.church_id && data.users && data.users.length) {
         dispatch({ type: UPDATE_USER_FROM_CHURCH, payload: data });
         // dispatch({
         //     type: LIST_ALL_ELECTIONS,
@@ -570,17 +571,6 @@ export const makeAddOption = async ({ dispatch, payload }) => {
     });
     if (data && data.length) {
         dispatch({ type: HIDE_GLOBAL_ALERT });
-
-        // dispatch({
-        //     type: SHOW_GLOBAL_ALERT,
-        //     payload: {
-        //         msg: "Optción agregada correctamente.",
-        //         // code: "017",
-        //         type: GLOBAL_ALERT_TYPES.SUCCESS,
-        //         withTime: true,
-        //     },
-        // });
-
         dispatch({
             type: LIST_ALL_OPTIONS,
             payload: [...data],
@@ -591,6 +581,30 @@ export const makeAddOption = async ({ dispatch, payload }) => {
             payload: {
                 msg: "Ocurrió un error al intentar crear una elección. Recargue e intente nuevamente.",
                 code: "087",
+                type: GLOBAL_ALERT_TYPES.INFO,
+                withTime: false,
+            },
+        });
+    }
+};
+
+export const getGeneralResults = async ({ payload, dispatch }) => {
+    // dispatch({ type: RESET_READY_TO_VOTE });
+    dispatch({ type: HIDE_GLOBAL_ALERT });
+    const data = await preBaseFetch(dispatch, {
+        url: BASE_API_PATH + ELECTIONS_API_PATH + "/general/" + payload.id,
+        method: "GET",
+    });
+    if (data && data.totals) {
+        dispatch({ type: HIDE_GLOBAL_ALERT });
+        dispatch({ type: UPDATE_GENERAL_RESULTS, payload: [...data.totals] });
+        // dispatch({ type: UPDATE_READY_TO_VOTE, payload: { ...data[0] } });
+    } else {
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "No existen votaciones activas. Por favor espera hasta que el moderador lo indique.",
+                // code: "057",
                 type: GLOBAL_ALERT_TYPES.INFO,
                 withTime: false,
             },
