@@ -15,8 +15,8 @@ class UsersApiController extends Controller
     }
 
     private function getRole($id) {
-        //obed /daniel / richard / sadia / katia
-        $arr_admins = array(10,11,12,13,14);
+        //obed /daniel / richard / sadia / katia / andres rosano / 
+        $arr_admins = array(10,11,12,13,14,15);
         return in_array($id, $arr_admins) ? 'admin' : 'user';
     }
 
