@@ -80,13 +80,18 @@ class ElectionsApiController extends Controller
         request()->validate([
             'title' => 'required'
         ]);
-        return Election::create([
+        Election::create([
             'title' => request('title'),
             'description' => request('description'),
             'result' => 0,
-            'active' => 0
+            'active' => true,
+            'visible' => false
         ]);
+
+        return $this->getElections();
     }
+
+
     public function update(Election $election){
         request()->validate([
             'title' => 'required',
@@ -108,4 +113,42 @@ class ElectionsApiController extends Controller
             'success' => $success
         ];
     }
+
+    private function getElections() {
+        $churchesDb = DB::table('elections')
+            ->select('id', 'title', 'description', 'result', 'visible')
+            ->where('active', '=', true)
+            ->orderBy('title')
+            ->get();
+
+        $churches = array();
+
+        foreach ($churchesDb as $church) {
+            $tmp = [
+                'id' => $church->id,
+                'title' => $church->title,
+                'description' => $church->description,
+                'result' => $church->result,
+                'visible' => $church->visible
+            ] ;
+            array_push($churches, $tmp);
+        }
+        return $churches;
+    }
+
+
+    public function enableElection(Election $election){
+        $election->update([
+            'visible' => request('visible')
+        ]);
+        return $this->getElections();
+    }
+
+    public function softDelete(Election $election){
+        $election->update([
+            'active' => false
+        ]);
+        return $this->getElections();
+    }
+
 }

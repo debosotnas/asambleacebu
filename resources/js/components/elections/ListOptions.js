@@ -6,26 +6,35 @@ import { connect } from "react-redux";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
-
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+
+import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
 
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import InputGroup from "react-bootstrap/InputGroup";
 import FormControl from "react-bootstrap/FormControl";
 
-import { makeDelChurch, makeUpdateChurch } from "../../state/actions";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import Dropdown from "react-bootstrap/Dropdown";
+
+import { makeDelOption } from "../../state/actions";
 
 const makeStyles = ({ isMobile }) => ({
+    ddrop: css`
+        display: inline-block;
+        margin-left: 5px;
+    `,
+    // ---------------------
     titleChurch: css`
         font-size: 16px;
         color: #1c37f7;
         margin-bottom: 10px;
-        text-align: center;
+        margin-left: 15px;
+        /* text-align: center; */
     `,
     listChurchesBlock: css`
         margin: 10px 0;
@@ -37,7 +46,7 @@ const makeStyles = ({ isMobile }) => ({
         }
 
         .list-churches-block-content {
-            height: 400px;
+            height: 200px;
             overflow-y: auto;
             /* border: 1px solid #0050f0; */
 
@@ -71,15 +80,19 @@ const makeStyles = ({ isMobile }) => ({
     `,
 });
 
-const ListChurches = ({
-    churches,
-    makeDelChurch,
-    makeUpdateChurch,
+const ListOptions = ({
+    opts,
+    elections,
+    // usersByChurch,
+    makeDelOption,
+    // makeUpdateChurch,
     dispatch,
 }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
     const styles = makeStyles({ isMobile });
+
+    const [selectedDropD, setSelectedDropD] = useState("--");
 
     const [showEdit, setShowEdit] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
@@ -90,20 +103,27 @@ const ListChurches = ({
     const [churchEditName, setChurchEditName] = useState(null);
     const [churchEditMembers, setChurchEditMembers] = useState(null);
 
+    //------------
+
+    const [currSelElection, setCurSelElection] = useState(null);
+
+    // loading users
+    const [isLoadingDD, setIsLoadingDD] = useState(false);
+
     const handleDelConfirmed = async () => {
         if (!idChurchSelected) {
             return;
         }
         setIsLoading(true);
         try {
-            await makeDelChurch({
+            await makeDelOption({
                 payload: {
                     id: idChurchSelected,
                 },
                 dispatch,
             });
         } catch (e) {
-            console.log("Error after try makeDelChurch! - Err: ", e);
+            console.log("Error after try makeDelOption! - Err: ", e);
         } finally {
             setIsLoading(false);
             setShowDelete(false);
@@ -137,10 +157,10 @@ const ListChurches = ({
 
         setIsLoading(true);
         try {
-            await makeUpdateChurch({
-                payload,
-                dispatch,
-            });
+            // await makeUpdateChurch({
+            //     payload,
+            //     dispatch,
+            // });
         } catch (e) {
             console.log("Error after try makeUpdateChurch! - Err: ", e);
         } finally {
@@ -172,68 +192,113 @@ const ListChurches = ({
         setShowEdit(true);
     };
 
+    const handleUpdateSelectDropD = async (id) => {
+        const ff = elections.find((c) => {
+            return c.id === +id;
+        });
+        console.log("fff>>> ", ff);
+        if (ff) {
+            // setIsLoadingDD(true);
+            // await loadUsersByChurch({ payload: { id: ff.id }, dispatch });
+            // setIsLoadingDD(false);
+            setCurSelElection(ff);
+
+            const ttt =
+                String(ff.title).length > 25
+                    ? String(ff.title).substr(0, 25) + "..."
+                    : ff.title;
+            setSelectedDropD(ttt);
+
+            // setSelectedDropD(ff.name);
+        }
+    };
     return (
         <>
             <div css={styles.listChurchesBlock}>
                 <div css={styles.titleChurch}>
-                    Iglesias ({churches && churches.length})
+                    Ver Opciones de:{" "}
+                    <DropdownButton
+                        id={`dropdown-button-drop-down`}
+                        drop={`down`}
+                        variant="secondary"
+                        title={selectedDropD}
+                        css={styles.ddrop}
+                        onSelect={(e) => {
+                            handleUpdateSelectDropD(e);
+                        }}
+                        disabled={isLoadingDD}
+                    >
+                        {elections.map((c) => {
+                            return (
+                                <Dropdown.Item key={c.id} eventKey={c.id}>
+                                    {c.title}
+                                </Dropdown.Item>
+                            );
+                        })}
+                    </DropdownButton>
                 </div>
 
                 <Container>
                     <Row>
                         <Col xs={7}>
-                            <span class="title-list">Nombre (# Titulares)</span>
+                            <span class="title-list">Opción</span>
                         </Col>
                         <Col xs={5}></Col>
                     </Row>
                 </Container>
                 <div class="list-churches-block-content">
                     <Container>
-                        {churches.map((c) => {
-                            return (
-                                <div class="dyn-row">
-                                    <Row>
-                                        <Col xs={7}>
-                                            <div class="l-col">
-                                                {c.name} ({c.members})
-                                            </div>
-                                        </Col>
-                                        <Col xs={5}>
-                                            <div class="r-col">
-                                                <button
+                        {currSelElection &&
+                            opts
+                                .filter(
+                                    (ooo) =>
+                                        ooo.election_id === currSelElection.id
+                                )
+                                .map((c) => {
+                                    return (
+                                        <div key={c.id} class="dyn-row">
+                                            <Row>
+                                                <Col xs={7}>
+                                                    <div class="l-col">
+                                                        {c.name}
+                                                    </div>
+                                                </Col>
+                                                <Col xs={5}>
+                                                    <div class="r-col">
+                                                        {/* <button
                                                     onClick={() => {
                                                         handleUpdateChurch(c);
                                                     }}
                                                     class="btn-ac"
                                                 >
                                                     <EditIcon />
-                                                </button>
-                                                <button
-                                                    onClick={() => {
-                                                        handleDelChurch(c.id);
-                                                    }}
-                                                    class="btn-ac"
-                                                >
-                                                    <DeleteIcon />
-                                                </button>
-                                            </div>
-                                        </Col>
-                                    </Row>
-                                </div>
-                            );
-                        })}
+                                                </button> */}
+                                                        <button
+                                                            onClick={() => {
+                                                                handleDelChurch(
+                                                                    c.id
+                                                                );
+                                                            }}
+                                                            class="btn-ac"
+                                                        >
+                                                            <DeleteIcon />
+                                                        </button>
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                        </div>
+                                    );
+                                })}
                     </Container>
                 </div>
             </div>
 
             <Modal show={showDelete} centered onHide={handleCloseDelete}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Eliminar Iglesia</Modal.Title>
+                    <Modal.Title>Eliminar Opción</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <div>
-                        ¿Confirma eliminar la iglesia y todos sus titulares?
-                    </div>
+                    <div>¿Confirma eliminar esta opción?</div>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
@@ -314,13 +379,15 @@ const ListChurches = ({
     );
 };
 
-const ListChurchesConnected = connect(
+const ListOptionsConnected = connect(
     (state) => {
-        return {};
+        return {
+            opts: state.optionsInfo.opts,
+        };
     },
     (dispatch) => {
-        return { makeDelChurch, makeUpdateChurch, dispatch };
+        return { makeDelOption, dispatch };
     }
-)(ListChurches);
+)(ListOptions);
 
-export default ListChurchesConnected;
+export default ListOptionsConnected;

@@ -10,6 +10,9 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
+import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
+
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import InputGroup from "react-bootstrap/InputGroup";
@@ -32,7 +35,7 @@ const makeStyles = ({ isMobile }) => ({
     // ---------------------
     titleChurch: css`
         font-size: 16px;
-        color: #995555;
+        color: #1c37f7;
         margin-bottom: 10px;
         margin-left: 15px;
         /* text-align: center; */
@@ -261,7 +264,7 @@ const ListChurches = ({
                                                     }}
                                                     class="btn-ac"
                                                 >
-                                                    Editar
+                                                    <EditIcon />
                                                 </button>
                                                 <button
                                                     onClick={() => {
@@ -269,7 +272,7 @@ const ListChurches = ({
                                                     }}
                                                     class="btn-ac"
                                                 >
-                                                    Eliminar
+                                                    <DeleteIcon />
                                                 </button>
                                             </div>
                                         </Col>

@@ -7,6 +7,8 @@ import {
     UPDATE_USER_FROM_CHURCH,
     UPDATE_READY_TO_VOTE,
     RESET_READY_TO_VOTE,
+    LIST_ALL_ELECTIONS,
+    LIST_ALL_OPTIONS,
 } from "./actionTypes";
 import { GLOBAL_ALERT_TYPES } from "./constants";
 
@@ -14,6 +16,7 @@ const BASE_API_PATH = window.location.origin + "/api/";
 const USERS_API_PATH = "users";
 const CHURCHES_API_PATH = "churches";
 const ELECTIONS_API_PATH = "elections";
+const OPTIONS_API_PATH = "options";
 const VOTES_API_PATH = "votes";
 
 const baseFetch = ({ method, url, payload = {} }) => {
@@ -138,6 +141,8 @@ const callFetchSomethingToVote = async (dispatch) => {
     }
 };
 
+/* ********************************************************************** */
+// MAKE VOTE!!
 const callFetchSendVote = async (dispatch, payload) => {
     const data = await preBaseFetch(dispatch, {
         url: BASE_API_PATH + VOTES_API_PATH,
@@ -157,15 +162,27 @@ const callFetchSendVote = async (dispatch, payload) => {
             },
         });
     } else {
-        dispatch({
-            type: SHOW_GLOBAL_ALERT,
-            payload: {
-                msg: "El voto fue registrado. Sin embargo ha ocurrido un error al traer la última información.",
-                code: "057",
-                type: GLOBAL_ALERT_TYPES.INFO,
-                withTime: false,
-            },
-        });
+        if (data && data.error) {
+            dispatch({
+                type: SHOW_GLOBAL_ALERT,
+                payload: {
+                    msg: data.error,
+                    code: "001",
+                    type: GLOBAL_ALERT_TYPES.ERROR,
+                    withTime: false,
+                },
+            });
+        } else {
+            dispatch({
+                type: SHOW_GLOBAL_ALERT,
+                payload: {
+                    msg: "El voto fue registrado. Sin embargo ha ocurrido un error al traer la última información.",
+                    code: "057",
+                    type: GLOBAL_ALERT_TYPES.INFO,
+                    withTime: false,
+                },
+            });
+        }
     }
 };
 
@@ -175,6 +192,20 @@ export const updateChurchesReducer = ({ churches, dispatch }) => {
     dispatch({
         type: UPDATE_CHURCHES_LIST,
         payload: [...(churches && churches.length ? churches : [])],
+    });
+};
+
+export const updateOptionsReducer = ({ options, dispatch }) => {
+    dispatch({
+        type: LIST_ALL_OPTIONS,
+        payload: [...(options && options.length ? options : [])],
+    });
+};
+
+export const updateElectionsReducer = ({ elections, dispatch }) => {
+    dispatch({
+        type: LIST_ALL_ELECTIONS,
+        payload: [...(elections && elections.length ? elections : [])],
     });
 };
 
@@ -363,6 +394,11 @@ export const makeLogin = async (payload, dispatch) => {
                 dispatch({ type: HIDE_GLOBAL_ALERT });
                 dispatch({ type: SET_LOGGED_IN, payload: { ...result } });
                 updateChurchesReducer({ dispatch, churches: result.churches });
+                updateOptionsReducer({ dispatch, options: result.options });
+                updateElectionsReducer({
+                    dispatch,
+                    elections: result.elections,
+                });
             } else {
                 dispatch({
                     type: SHOW_GLOBAL_ALERT,
@@ -403,4 +439,161 @@ export const checkSomethingToVote = async ({ dispatch }) => {
 
 export const makeSendVote = async ({ dispatch, payload }) => {
     const response = await callFetchSendVote(dispatch, payload);
+};
+
+export const makeDelElection = async ({ dispatch, payload }) => {
+    const data = await preBaseFetch(dispatch, {
+        url: BASE_API_PATH + ELECTIONS_API_PATH + "/del/" + payload.id,
+        method: "PUT",
+        payload,
+    });
+    if (data) {
+        dispatch({
+            type: LIST_ALL_ELECTIONS,
+            payload: [...data],
+        });
+    } else {
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "Ocurrió un error al intentar eliminar la elección y sus opciones. Recargue e intente nuevamente.",
+                code: "57",
+                type: GLOBAL_ALERT_TYPES.INFO,
+                withTime: false,
+            },
+        });
+    }
+};
+
+export const makeDelOption = async ({ dispatch, payload }) => {
+    const data = await preBaseFetch(dispatch, {
+        url: BASE_API_PATH + OPTIONS_API_PATH + "/del/" + payload.id,
+        method: "PUT",
+        payload,
+    });
+    if (data) {
+        dispatch({
+            type: LIST_ALL_OPTIONS,
+            payload: [...data],
+        });
+    } else {
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "Ocurrió un error al intentar eliminar la opción. Recargue e intente nuevamente.",
+                code: "97",
+                type: GLOBAL_ALERT_TYPES.INFO,
+                withTime: false,
+            },
+        });
+    }
+};
+
+export const makeElectionActive = async ({ dispatch, payload }) => {
+    const data = await preBaseFetch(dispatch, {
+        url: BASE_API_PATH + ELECTIONS_API_PATH + "/activate/" + payload.id,
+        method: "PUT",
+        payload,
+    });
+    if (data && data.length) {
+        dispatch({
+            type: LIST_ALL_ELECTIONS,
+            payload: [...data],
+        });
+    } else {
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "Ocurrió un error al intentar activar/desactivar la elección. Recargue e intente nuevamente.",
+                code: "57",
+                type: GLOBAL_ALERT_TYPES.INFO,
+                withTime: false,
+            },
+        });
+    }
+};
+
+export const makeAddUser = async ({ dispatch, payload }) => {
+    const data = await preBaseFetch(dispatch, {
+        url: BASE_API_PATH + USERS_API_PATH,
+        method: "POST",
+        payload,
+    });
+    if (data && data.length) {
+        dispatch({ type: UPDATE_USER_FROM_CHURCH, payload: data });
+        // dispatch({
+        //     type: LIST_ALL_ELECTIONS,
+        //     payload: [...data],
+        // });
+    } else {
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "Ocurrió un error al intentar crear un Titular. Por favor intente nuevamente.",
+                code: "021",
+                type: GLOBAL_ALERT_TYPES.ERROR,
+                withTime: false,
+            },
+        });
+    }
+};
+
+export const makeAddElection = async ({ dispatch, payload }) => {
+    const data = await preBaseFetch(dispatch, {
+        url: BASE_API_PATH + ELECTIONS_API_PATH,
+        method: "POST",
+        payload,
+    });
+    if (data && data.length) {
+        dispatch({
+            type: LIST_ALL_ELECTIONS,
+            payload: [...data],
+        });
+    } else {
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "Ocurrió un error al intentar crear una elección. Recargue e intente nuevamente.",
+                code: "017",
+                type: GLOBAL_ALERT_TYPES.INFO,
+                withTime: false,
+            },
+        });
+    }
+};
+
+export const makeAddOption = async ({ dispatch, payload }) => {
+    const data = await preBaseFetch(dispatch, {
+        url: BASE_API_PATH + OPTIONS_API_PATH,
+        method: "POST",
+        payload,
+    });
+    if (data && data.length) {
+        dispatch({ type: HIDE_GLOBAL_ALERT });
+
+        // dispatch({
+        //     type: SHOW_GLOBAL_ALERT,
+        //     payload: {
+        //         msg: "Optción agregada correctamente.",
+        //         // code: "017",
+        //         type: GLOBAL_ALERT_TYPES.SUCCESS,
+        //         withTime: true,
+        //     },
+        // });
+
+        dispatch({
+            type: LIST_ALL_OPTIONS,
+            payload: [...data],
+        });
+    } else {
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "Ocurrió un error al intentar crear una elección. Recargue e intente nuevamente.",
+                code: "087",
+                type: GLOBAL_ALERT_TYPES.INFO,
+                withTime: false,
+            },
+        });
+    }
 };

@@ -3,7 +3,7 @@ import { jsx, css } from "@emotion/react";
 import React, { useState } from "react";
 import { connect } from "react-redux";
 
-import { makeAddChurch } from "../../state/actions";
+import { makeAddElection } from "../../state/actions";
 
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
@@ -32,7 +32,7 @@ const makeStyles = ({ isMobile }) => ({
     `,
 });
 
-const AddNewChurch = ({ makeAddChurch, dispatch }) => {
+const AddNewElection = ({ makeAddElection, dispatch }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
     const styles = makeStyles({ isMobile });
@@ -40,29 +40,28 @@ const AddNewChurch = ({ makeAddChurch, dispatch }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleAddChurch = async () => {
-        const name = document.querySelector("#churchName").value;
-        const members = document.querySelector("#churchMembers").value;
+        const title = document.querySelector("#electionTitle").value;
+        const description = document.querySelector(
+            "#electionDescription"
+        ).value;
 
-        if (!name) {
-            return;
-        }
-
-        if (isNaN(members) || !members) {
+        console.log("title: ", title, " - description: ", description);
+        if (!title || !description) {
             return;
         }
 
         const payload = {
-            name,
-            members,
+            title,
+            description,
         };
 
         try {
             setIsLoading(true);
-            await makeAddChurch({ payload, dispatch });
-            document.querySelector("#churchName").value = "";
-            document.querySelector("#churchMembers").value = "";
+            await makeAddElection({ payload, dispatch });
+            document.querySelector("#electionTitle").value = "";
+            document.querySelector("#electionDescription").value = "";
         } catch (e) {
-            console.log("Error after add church! - Err: ", e);
+            console.log("Error after add election! - Err: ", e);
         } finally {
             setIsLoading(false);
         }
@@ -70,24 +69,24 @@ const AddNewChurch = ({ makeAddChurch, dispatch }) => {
 
     return (
         <div css={styles.addChurchBlock}>
-            <div css={styles.titleChurch}>Agregar iglesia</div>
+            <div css={styles.titleChurch}>Agregar elección</div>
 
             <div>
-                <div>Nombre:</div>
+                <div>Título:</div>
                 <div>
                     <input
-                        name="name"
+                        name="electionTitle"
                         type="text"
-                        id="churchName"
+                        id="electionTitle"
                         autoComplete="off"
                     />
                 </div>
-                <div>Número de Titulares:</div>
+                <div>Descripción:</div>
                 <div>
                     <input
-                        name="members"
+                        name="electionDescription"
                         type="text"
-                        id="churchMembers"
+                        id="electionDescription"
                         autoComplete="off"
                     />
                 </div>
@@ -98,7 +97,7 @@ const AddNewChurch = ({ makeAddChurch, dispatch }) => {
                             handleAddChurch();
                         }}
                     >
-                        Agregar Iglesia
+                        Agregar Elección
                     </Button>
                 </div>
             </div>
@@ -106,13 +105,13 @@ const AddNewChurch = ({ makeAddChurch, dispatch }) => {
     );
 };
 
-const AddNewChurchConnected = connect(
+const AddNewElectionConnected = connect(
     (state) => {
         return {};
     },
     (dispatch) => {
-        return { dispatch, makeAddChurch };
+        return { dispatch, makeAddElection };
     }
-)(AddNewChurch);
+)(AddNewElection);
 
-export default AddNewChurchConnected;
+export default AddNewElectionConnected;

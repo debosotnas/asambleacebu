@@ -3,7 +3,7 @@ import { jsx, css } from "@emotion/react";
 import React, { useState } from "react";
 import { connect } from "react-redux";
 
-import { makeAddUser } from "../../state/actions";
+import { makeAddOption } from "../../state/actions";
 
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
@@ -36,106 +36,78 @@ const makeStyles = ({ isMobile }) => ({
         display: inline-block;
         margin: 5px 0 10px 0;
     `,
-    ddWrap: css`
-        /* width: 100%; */
-        // overflow-x: hidden;
-    `,
 });
 
-const AddNewChurch = ({ churches, makeAddUser, dispatch }) => {
+const AddNewElection = ({ elections, makeAddOption, dispatch }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
     const styles = makeStyles({ isMobile });
 
     const [isLoading, setIsLoading] = useState(false);
-
     const [selectedDropD, setSelectedDropD] = useState("--");
     const [selectedDropDChurch, setSelectedDropDChurch] = useState(null);
 
     const handleAddChurch = async () => {
-        const ci = document.querySelector("#ci").value;
-        const name = document.querySelector("#username").value;
-        const phone = document.querySelector("#phone").value;
+        const name = document.querySelector("#optionName").value;
+        const election_id = selectedDropDChurch && selectedDropDChurch.id;
 
-        if (
-            !selectedDropDChurch ||
-            (selectedDropDChurch && !selectedDropDChurch.id)
-        ) {
-            return;
-        }
-
-        const church_id = selectedDropDChurch.id;
-
-        if (!name || !ci || !phone) {
+        if (!name || !election_id) {
             return;
         }
 
         const payload = {
-            ci,
             name,
-            phone,
-            church_id,
+            election_id,
         };
 
         try {
             setIsLoading(true);
-            await makeAddUser({ payload, dispatch });
-            console.log(">> payload: ", payload);
-            document.querySelector("#ci").value = "";
-            document.querySelector("#username").value = "";
-            document.querySelector("#phone").value = "";
+            await makeAddOption({ payload, dispatch });
+            document.querySelector("#optionName").value = "";
+            // document.querySelector("#electionDescription").value = "";
             setSelectedDropD("--");
             setSelectedDropDChurch(null);
         } catch (e) {
-            console.log("Error after add church! - Err: ", e);
+            console.log("Error after add election! - Err: ", e);
         } finally {
             setIsLoading(false);
         }
     };
 
     const handleUpdateSelectDropD = async (id) => {
-        const ff = churches.find((c) => {
+        const ff = elections.find((c) => {
             return c.id === +id;
         });
         if (ff) {
             const ttt =
-                String(ff.name).length > 17
-                    ? String(ff.name).substr(0, 17) + "..."
-                    : ff.name;
+                String(ff.title).length > 17
+                    ? String(ff.title).substr(0, 17) + "..."
+                    : ff.title;
             setSelectedDropD(ttt);
             setSelectedDropDChurch(ff);
         }
     };
 
+    if (elections && !elections.length) {
+        return null;
+    }
+
     return (
         <div css={styles.addChurchBlock}>
-            <div css={styles.titleChurch}>Agregar Titular</div>
+            <div css={styles.titleChurch}>Agregar Opción</div>
 
             <div>
-                <div>C.I.:</div>
-                <div>
-                    <input
-                        type="text"
-                        id="ci"
-                        autoComplete="off"
-                        maxLength="8"
-                    />
-                </div>
                 <div>Nombre:</div>
                 <div>
-                    <input type="text" id="username" autoComplete="off" />
-                </div>
-                <div>Celular (09x xxx xxx):</div>
-                <div>
                     <input
+                        name="optionName"
                         type="text"
-                        id="phone"
-                        maxLength="9"
+                        id="optionName"
                         autoComplete="off"
                     />
                 </div>
-                <div>Iglesia:</div>
-                <div css={styles.ddWrap}>
+                <div>Elección:</div>
+                <div>
                     <DropdownButton
                         id={`dropdown-button-drop-down`}
                         drop={`down`}
@@ -146,15 +118,16 @@ const AddNewChurch = ({ churches, makeAddUser, dispatch }) => {
                             handleUpdateSelectDropD(e);
                         }}
                     >
-                        {churches.map((c) => {
+                        {elections.map((c) => {
                             return (
-                                <Dropdown.Item key={c.id} eventKey={c.id}>
-                                    {c.name}
+                                <Dropdown.Item eventKey={c.id}>
+                                    {c.title}
                                 </Dropdown.Item>
                             );
                         })}
                     </DropdownButton>
                 </div>
+
                 <div css={styles.addChurchesBtnCnt}>
                     <Button
                         disabled={isLoading}
@@ -162,7 +135,7 @@ const AddNewChurch = ({ churches, makeAddUser, dispatch }) => {
                             handleAddChurch();
                         }}
                     >
-                        Agregar Titular
+                        Agregar Elección
                     </Button>
                 </div>
             </div>
@@ -170,13 +143,15 @@ const AddNewChurch = ({ churches, makeAddUser, dispatch }) => {
     );
 };
 
-const AddNewChurchConnected = connect(
+const AddNewElectionConnected = connect(
     (state) => {
-        return {};
+        return {
+            elections: state.electionsInfo.elections,
+        };
     },
     (dispatch) => {
-        return { dispatch, makeAddUser };
+        return { dispatch, makeAddOption };
     }
-)(AddNewChurch);
+)(AddNewElection);
 
-export default AddNewChurchConnected;
+export default AddNewElectionConnected;

@@ -10,6 +10,25 @@ use Illuminate\Support\Facades\DB;
 class VotesApiController extends Controller
 {
 
+    private function isElectionActive($election_id) {
+
+        $elections = DB::table('elections')
+            ->select('elections.id')
+            ->where('elections.id', '=', $election_id)
+            ->where('elections.visible', '=', true)
+            ->where('elections.active', '=', true)
+            ->get();
+
+        return count($elections) > 0;
+
+        // $isActive = false;
+        // if (is_array($elections) && count($elections) > 0) {
+        //     $curr = $elections[0];
+        //     $isActive = $curr->id === $election_id;
+        // }
+        // return $isActive;
+    }
+
     private function userAlreadyVoted($election_id) {
         $user_id = Session::get('user_id');
 
@@ -80,8 +99,13 @@ class VotesApiController extends Controller
             'option_id' => 'required',
             'user_id' => 'required'
         ]);
+
         if (Session::get('user_id') != request('user_id')) {
             return ['error' => 'Authorization error'];
+        }
+
+        if(!$this->isElectionActive(request('election_id'))) {
+            return ['error' => 'Lo sentimos pero parece que la votación ha terminado. No fue posible enviar tu voto.'];
         }
 
         if ($this->userAlreadyVoted(request('election_id'))) {

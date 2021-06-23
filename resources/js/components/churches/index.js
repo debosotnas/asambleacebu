@@ -15,7 +15,7 @@ import Col from "react-bootstrap/Col";
 
 const makeStyles = ({ isMobile }) => ({
     listAndAdd: css`
-        background-color: #fedcff;
+        background-color: #eeffea;
         margin: 5px 0;
     `,
 });

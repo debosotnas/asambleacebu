@@ -39,6 +39,48 @@ class UsersApiController extends Controller
         return $churches;
     }
 
+    private function getElections() {
+        $churchesDb = DB::table('elections')
+            ->select('id', 'title', 'description', 'result', 'visible')
+            ->where('active', '=', true)
+            ->orderBy('title')
+            ->get();
+
+        $churches = array();
+
+        foreach ($churchesDb as $church) {
+            $tmp = [
+                'id' => $church->id,
+                'title' => $church->title,
+                'description' => $church->description,
+                'result' => $church->result,
+                'visible' => $church->visible
+            ] ;
+            array_push($churches, $tmp);
+        }
+        return $churches;
+    }
+
+    private function getOptions() {
+        $churchesDb = DB::table('options')
+            ->select('id', 'election_id', 'name')
+            ->where('active', '=', true)
+            ->orderBy('name')
+            ->get();
+
+        $churches = array();
+
+        foreach ($churchesDb as $church) {
+            $tmp = [
+                'id' => $church->id,
+                'election_id' => $church->election_id,
+                'name' => $church->name,
+            ] ;
+            array_push($churches, $tmp);
+        }
+        return $churches;
+    }
+
     public function index(){
         return User::all();
     }
@@ -47,17 +89,21 @@ class UsersApiController extends Controller
             'church_id' => 'required',
             'ci' => 'required',
             'name' => 'required',
-            'email' => 'required',
+            // 'email' => 'required',
             'phone' => 'required',
+            ''
         ]);
-        return User::create([
+        User::create([
             'church_id' => request('church_id'),
             'ci' => request('ci'),
             'name' => request('name'),
-            'email' => request('email'),
+            'email' => '',
             'phone' => request('phone'),
-            'password' => $this->createPassword()
+            'password' => $this->createPassword(),
+            'active' => true
         ]);
+
+        return $this->fromChurch(request('church_id'));
     }
 
     public function update(User $user){
@@ -157,7 +203,9 @@ class UsersApiController extends Controller
 
             if($role === 'admin') {
                 $returnUser['churches'] = $this->getChurches();
-                $returnUser['idSession'] = Session::get('user_id');
+                $returnUser['elections'] = $this->getElections();
+                $returnUser['options'] = $this->getOptions();
+                // $returnUser['idSession'] = Session::get('user_id');
             }
 
             /*

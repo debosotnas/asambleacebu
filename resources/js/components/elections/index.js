@@ -6,8 +6,10 @@ import { connect } from "react-redux";
 import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
-import AddNewUser from "./AddNewUser";
-import ListUsers from "./ListUsers";
+import AddNewOption from "./AddNewOption";
+import AddNewElection from "./AddNewElection";
+import ListElections from "./ListElections";
+import ListOptions from "./ListOptions";
 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -19,7 +21,7 @@ const makeStyles = ({ isMobile }) => ({
         margin: 5px 0;
     `,
 });
-const Churches = ({ churches }) => {
+const Elections = ({ elections }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
     const styles = makeStyles({ isMobile });
@@ -28,27 +30,35 @@ const Churches = ({ churches }) => {
         <Container css={styles.listAndAdd}>
             <Row>
                 <Col xs={4}>
-                    <AddNewUser churches={churches} />
+                    <AddNewElection />
                 </Col>
                 <Col xs={8} css={["padding-right: 0"]}>
-                    <ListUsers churches={churches} />
+                    <ListElections elections={elections} />
+                </Col>
+            </Row>
+            <Row>
+                <Col xs={4}>
+                    <AddNewOption />
+                </Col>
+                <Col xs={8} css={["padding-right: 0"]}>
+                    <ListOptions elections={elections} />
                 </Col>
             </Row>
         </Container>
     );
 };
 
-const ChurchesConnected = connect(
+const ElectionsConnected = connect(
     (state) => {
-        const churches = state.churchesInfo.churches;
+        const elections = state.electionsInfo.elections || [];
 
         return {
-            churches,
+            elections,
         };
     },
     (dispatch) => {
         return { dispatch };
     }
-)(Churches);
+)(Elections);
 
-export default ChurchesConnected;
+export default ElectionsConnected;

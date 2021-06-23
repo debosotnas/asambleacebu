@@ -4,9 +4,31 @@ namespace App\Http\Controllers;
 
 use App\Models\Option;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OptionsApiController extends Controller
 {
+
+    private function getOptions() {
+        $churchesDb = DB::table('options')
+            ->select('id', 'election_id', 'name')
+            ->where('active', '=', true)
+            ->orderBy('name')
+            ->get();
+
+        $churches = array();
+
+        foreach ($churchesDb as $church) {
+            $tmp = [
+                'id' => $church->id,
+                'election_id' => $church->election_id,
+                'name' => $church->name,
+            ] ;
+            array_push($churches, $tmp);
+        }
+        return $churches;
+    }
+
     public function index(){
         return Option::all();
     }
@@ -15,10 +37,14 @@ class OptionsApiController extends Controller
             'election_id' => 'required',
             'name' => 'required'
         ]);
-        return Option::create([
+
+        Option::create([
             'election_id' => request('election_id'),
-            'name' => request('name')
+            'name' => request('name'),
+            'active' => true,
         ]);
+        
+        return $this->getOptions();
     }
     public function update(Option $option){
         request()->validate([
@@ -38,5 +64,12 @@ class OptionsApiController extends Controller
         return [
             'success' => $success
         ];
+    }
+
+    public function softDelete(Option $option){
+        $option->update([
+            'active' => false
+        ]);
+        return $this->getOptions();
     }
 }

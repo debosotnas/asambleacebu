@@ -7,7 +7,7 @@ import { useTheme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
+// import EditIcon from "@material-ui/icons/Edit";
 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -18,7 +18,11 @@ import Button from "react-bootstrap/Button";
 import InputGroup from "react-bootstrap/InputGroup";
 import FormControl from "react-bootstrap/FormControl";
 
-import { makeDelChurch, makeUpdateChurch } from "../../state/actions";
+import {
+    makeDelElection,
+    makeElectionActive,
+    makeUpdateChurch,
+} from "../../state/actions";
 
 const makeStyles = ({ isMobile }) => ({
     titleChurch: css`
@@ -37,13 +41,18 @@ const makeStyles = ({ isMobile }) => ({
         }
 
         .list-churches-block-content {
-            height: 400px;
+            height: 200px;
             overflow-y: auto;
             /* border: 1px solid #0050f0; */
 
             .dyn-row {
                 .l-col {
                     text-align: left;
+                    font-size: 14px;
+                    padding-left: 5px;
+                    .c-title {
+                        font-weight: bold;
+                    }
                 }
                 .r-col {
                     text-align: right;
@@ -69,14 +78,24 @@ const makeStyles = ({ isMobile }) => ({
             background-color: #a3da99;
         }
     `,
+    dynRowAll: css`
+        margin-top: 3px;
+    `,
+    dynRow: css`
+        .dyn-row {
+            background-color: #55daff !important;
+        }
+    `,
 });
 
-const ListChurches = ({
-    churches,
-    makeDelChurch,
+const ListElections = ({
+    elections,
+    makeDelElection,
     makeUpdateChurch,
+    makeElectionActive,
     dispatch,
 }) => {
+    // console.log(">>> elections: ", elections);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("xs"));
     const styles = makeStyles({ isMobile });
@@ -90,20 +109,36 @@ const ListChurches = ({
     const [churchEditName, setChurchEditName] = useState(null);
     const [churchEditMembers, setChurchEditMembers] = useState(null);
 
+    const handleActivateElection = async (currId, currVis) => {
+        const payload = {
+            id: currId,
+            visible: !currVis,
+        };
+        setIsLoading(true);
+        try {
+            await makeElectionActive({ payload, dispatch });
+        } catch (e) {
+            console.log("Error after try makeElectionActive! - Err: ", e);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const handleDelConfirmed = async () => {
         if (!idChurchSelected) {
             return;
         }
         setIsLoading(true);
         try {
-            await makeDelChurch({
-                payload: {
-                    id: idChurchSelected,
-                },
+            const payload = {
+                id: idChurchSelected,
+            };
+            await makeDelElection({
+                payload,
                 dispatch,
             });
         } catch (e) {
-            console.log("Error after try makeDelChurch! - Err: ", e);
+            console.log("Error after try makeDelElection! - Err: ", e);
         } finally {
             setIsLoading(false);
             setShowDelete(false);
@@ -175,50 +210,75 @@ const ListChurches = ({
     return (
         <>
             <div css={styles.listChurchesBlock}>
-                <div css={styles.titleChurch}>
-                    Iglesias ({churches && churches.length})
-                </div>
-
-                <Container>
-                    <Row>
-                        <Col xs={7}>
-                            <span class="title-list">Nombre (# Titulares)</span>
-                        </Col>
-                        <Col xs={5}></Col>
-                    </Row>
-                </Container>
+                <div css={styles.titleChurch}>Elecciones</div>
+                {elections && elections.length ? (
+                    <Container>
+                        <Row>
+                            <Col xs={7}>
+                                <span class="title-list">Título</span>
+                            </Col>
+                            <Col xs={5}></Col>
+                        </Row>
+                    </Container>
+                ) : (
+                    <></>
+                )}
                 <div class="list-churches-block-content">
                     <Container>
-                        {churches.map((c) => {
+                        {elections.map((c) => {
                             return (
-                                <div class="dyn-row">
-                                    <Row>
-                                        <Col xs={7}>
-                                            <div class="l-col">
-                                                {c.name} ({c.members})
-                                            </div>
-                                        </Col>
-                                        <Col xs={5}>
-                                            <div class="r-col">
-                                                <button
-                                                    onClick={() => {
-                                                        handleUpdateChurch(c);
-                                                    }}
-                                                    class="btn-ac"
-                                                >
-                                                    <EditIcon />
-                                                </button>
-                                                <button
-                                                    onClick={() => {
-                                                        handleDelChurch(c.id);
-                                                    }}
-                                                    class="btn-ac"
-                                                >
-                                                    <DeleteIcon />
-                                                </button>
-                                            </div>
-                                        </Col>
-                                    </Row>
+                                <div
+                                    css={
+                                        c.visible
+                                            ? [styles.dynRow, styles.dynRowAll]
+                                            : [styles.dynRowAll]
+                                    }
+                                >
+                                    <div class="dyn-row">
+                                        <Row>
+                                            <Col xs={7}>
+                                                <div class="l-col">
+                                                    <span class="c-title">
+                                                        {c.title}
+                                                    </span>
+                                                    {c.description
+                                                        ? `: ${c.description}`
+                                                        : ""}
+                                                </div>
+                                            </Col>
+                                            <Col xs={5}>
+                                                <div class="r-col">
+                                                    <button
+                                                        onClick={() => {
+                                                            handleActivateElection(
+                                                                c.id,
+                                                                c.visible
+                                                            );
+                                                            // handleUpdateChurch(c);
+                                                        }}
+                                                        class="btn-ac"
+                                                        disabled={isLoading}
+                                                    >
+                                                        {c.visible
+                                                            ? `Desactivar`
+                                                            : `Activar`}
+                                                    </button>
+
+                                                    <button
+                                                        disabled={isLoading}
+                                                        onClick={() => {
+                                                            handleDelChurch(
+                                                                c.id
+                                                            );
+                                                        }}
+                                                        class="btn-ac"
+                                                    >
+                                                        <DeleteIcon />
+                                                    </button>
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                    </div>
                                 </div>
                             );
                         })}
@@ -228,11 +288,11 @@ const ListChurches = ({
 
             <Modal show={showDelete} centered onHide={handleCloseDelete}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Eliminar Iglesia</Modal.Title>
+                    <Modal.Title>Eliminar Elección</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div>
-                        ¿Confirma eliminar la iglesia y todos sus titulares?
+                        ¿Confirma eliminar la elección y todas sus opciones?
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
@@ -314,13 +374,18 @@ const ListChurches = ({
     );
 };
 
-const ListChurchesConnected = connect(
+const ListElectionsConnected = connect(
     (state) => {
         return {};
     },
     (dispatch) => {
-        return { makeDelChurch, makeUpdateChurch, dispatch };
+        return {
+            makeDelElection,
+            makeElectionActive,
+            makeUpdateChurch,
+            dispatch,
+        };
     }
-)(ListChurches);
+)(ListElections);
 
-export default ListChurchesConnected;
+export default ListElectionsConnected;

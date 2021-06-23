@@ -24,6 +24,7 @@ import Button from "react-bootstrap/Button";
 // import { validateAccess } from "./helpers";
 import Churches from "./churches";
 import Users from "./users";
+import Elections from "./elections";
 
 const makeStyles = ({ isMobile }) => ({
     header: css`
@@ -50,35 +51,36 @@ const makeStyles = ({ isMobile }) => ({
         margin-top: 0;
     `,
     blockSectionAdmin: css`
-        background-color: #fedcff;
+        background-color: #e3ffdc;
         padding: 10px;
         margin: 10px 0;
-        border: 1px solid #e028d2;
+        border: 1px solid #2be028;
         .nav-link {
             /* padding: 0.4rem 1rem; */
         }
         .nav-item.nav-link {
             font-size: 18px;
-            background-color: #c28ccc;
+            background-color: #719e6c;
+            color: #050;
             a {
                 color: #6505af;
             }
             &:hover {
                 color: #6505af;
-                background-color: #e5a5f1;
-                border-color: #e5a5f1;
+                background-color: #719e6c;
+                border-color: #719e6c;
             }
         }
         .nav-item.nav-link.active {
-            background-color: #f4c0fd;
-            border-color: #f4c0fd;
+            background-color: #93d08f;
+            border-color: #93d08f;
             /* padding: 0.5rem 1rem; */
             a {
                 color: #a0109c;
             }
         }
         .tab-content {
-            background-color: #f4c0fd;
+            background-color: #93d08f;
             padding: 5px 10px;
         }
     `,
@@ -239,7 +241,7 @@ const Home = ({
                                                     eventKey="contact"
                                                     title="Elecciones"
                                                 >
-                                                    Test 3
+                                                    <Elections />
                                                 </Tab>
                                             </Tabs>
                                         </Jumbotron>
