@@ -36,9 +36,13 @@ Route::delete('/churches/{church}', [ChurchesApiController::class, 'destroy']);
 
 
 Route::get('/users', [UsersApiController::class, 'index']);
-Route::put('/users/{user}', [UsersApiController::class, 'update']);
 Route::delete('/users/{user}', [UsersApiController::class, 'destroy']);
 */
+//Edit user 
+Route::put('/users/{user}', [UsersApiController::class, 'update']);
+//SOFT delete user 
+Route::put('/users/del/{user}', [UsersApiController::class, 'softDelete']);
+
 // CREATE USER
 Route::post('/users', [UsersApiController::class, 'store']);
 

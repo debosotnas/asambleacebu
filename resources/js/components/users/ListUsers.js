@@ -22,8 +22,8 @@ import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 
 import {
-    makeDelChurch,
-    makeUpdateChurch,
+    makeDelUser,
+    makeUpdateUser,
     loadUsersByChurch,
 } from "../../state/actions";
 
@@ -88,8 +88,8 @@ const makeStyles = ({ isMobile }) => ({
 const ListChurches = ({
     churches,
     usersByChurch,
-    makeDelChurch,
-    makeUpdateChurch,
+    makeDelUser,
+    makeUpdateUser,
     dispatch,
 }) => {
     const theme = useTheme();
@@ -105,7 +105,9 @@ const ListChurches = ({
     const [churchSelected, setChurchSelected] = useState(null);
 
     const [churchEditName, setChurchEditName] = useState(null);
-    const [churchEditMembers, setChurchEditMembers] = useState(null);
+    const [ciUser, setCiUser] = useState(null);
+    const [editCel, setEditCel] = useState(null);
+    const [currChurchSelected, setCurrChurchSelected] = useState(null);
 
     // loading users
     const [isLoadingDD, setIsLoadingDD] = useState(false);
@@ -116,14 +118,15 @@ const ListChurches = ({
         }
         setIsLoading(true);
         try {
-            await makeDelChurch({
+            await makeDelUser({
                 payload: {
                     id: idChurchSelected,
+                    church_id: currChurchSelected.id,
                 },
                 dispatch,
             });
         } catch (e) {
-            console.log("Error after try makeDelChurch! - Err: ", e);
+            console.log("Error after try makeDelUser! - Err: ", e);
         } finally {
             setIsLoading(false);
             setShowDelete(false);
@@ -135,34 +138,30 @@ const ListChurches = ({
             return;
         }
 
-        if (
-            !churchEditName ||
-            (churchEditMembers && isNaN(churchEditMembers))
-        ) {
-            return;
-        }
+        console.log(">>>>> churchSelected: ", churchSelected);
 
-        const memb = parseInt(churchEditMembers);
-        if (memb < 1) {
+        if (!churchEditName || !ciUser) {
             return;
         }
 
         const payload = {
             id: churchSelected.id,
+            church_id: currChurchSelected.id,
+            ci: ciUser,
             name: churchEditName,
-            members: memb,
+            phone: editCel,
         };
 
-        console.log(">>> payload edit: ", payload);
+        console.log(">>> payload USER edit: ", payload);
 
         setIsLoading(true);
         try {
-            await makeUpdateChurch({
+            await makeUpdateUser({
                 payload,
                 dispatch,
             });
         } catch (e) {
-            console.log("Error after try makeUpdateChurch! - Err: ", e);
+            console.log("Error after try makeUpdateUser! - Err: ", e);
         } finally {
             setIsLoading(false);
             setShowEdit(false);
@@ -187,8 +186,11 @@ const ListChurches = ({
             return;
         }
         setChurchSelected({ ...church });
+
+        setCiUser(church.ci);
         setChurchEditName(church.name);
-        setChurchEditMembers(church.members);
+        setEditCel(church.phone);
+
         setShowEdit(true);
     };
 
@@ -206,7 +208,7 @@ const ListChurches = ({
                     ? String(ff.name).substr(0, 25) + "..."
                     : ff.name;
             setSelectedDropD(ttt);
-
+            setCurrChurchSelected(ff);
             // setSelectedDropD(ff.name);
         }
     };
@@ -301,9 +303,7 @@ const ListChurches = ({
                     <Modal.Title>Eliminar Iglesia</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <div>
-                        ¿Confirma eliminar la iglesia y todos sus miembros?
-                    </div>
+                    <div>¿Confirma eliminar este Titular?</div>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
@@ -330,11 +330,25 @@ const ListChurches = ({
                 <Modal.Body>
                     <div>
                         <div>
+                            <div>C.I.:</div>
+                            <div>
+                                <InputGroup size="sm" className="mb-3">
+                                    <FormControl
+                                        name="ciEdit"
+                                        value={ciUser}
+                                        onChange={(e) => {
+                                            setCiUser(e.target.value);
+                                        }}
+                                        aria-label="Small"
+                                        aria-describedby="inputGroup-sizing-sm"
+                                    />
+                                </InputGroup>
+                            </div>
                             <div>Nombre:</div>
                             <div>
                                 <InputGroup size="sm" className="mb-3">
                                     <FormControl
-                                        name="church"
+                                        name="nombreEdit"
                                         value={churchEditName}
                                         onChange={(e) => {
                                             setChurchEditName(e.target.value);
@@ -344,16 +358,14 @@ const ListChurches = ({
                                     />
                                 </InputGroup>
                             </div>
-                            <div>Número de Titulares:</div>
+                            <div>Celular:</div>
                             <div>
                                 <InputGroup size="sm" className="mb-3">
                                     <FormControl
-                                        name="members"
-                                        value={churchEditMembers}
+                                        name="celEdit"
+                                        value={editCel}
                                         onChange={(e) => {
-                                            setChurchEditMembers(
-                                                e.target.value
-                                            );
+                                            setEditCel(e.target.value);
                                         }}
                                         aria-label="Small"
                                         aria-describedby="inputGroup-sizing-sm"
@@ -391,7 +403,7 @@ const ListChurchesConnected = connect(
         };
     },
     (dispatch) => {
-        return { makeDelChurch, makeUpdateChurch, loadUsersByChurch, dispatch };
+        return { makeDelUser, makeUpdateUser, loadUsersByChurch, dispatch };
     }
 )(ListChurches);
 

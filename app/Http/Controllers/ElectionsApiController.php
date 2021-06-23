@@ -152,15 +152,6 @@ class ElectionsApiController extends Controller
     }
 
     public function getGeneralResults($election) {
-/*
-
-        $users = DB::table('users')
-        ->join('churches', 'users.church_id', '=', 'churches.id')
-        ->select('users.id', 'users.ci', 'users.name', 'users.email', 'users.phone', 'users.password')
-        ->where('churches.id', '=', $church)
-
-
-        */
 
 
 

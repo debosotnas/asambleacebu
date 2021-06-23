@@ -111,19 +111,22 @@ class UsersApiController extends Controller
             'church_id' => 'required',
             'ci' => 'required',
             'name' => 'required',
-            'email' => 'required',
+            // 'email' => 'required',
             'phone' => 'required',
         ]);
-        $success = $user->update([
+        $user->update([
             'church_id' => request('church_id'),
             'ci' => request('ci'),
             'name' => request('name'),
             'email' => request('email'),
             'phone' => request('phone'),
         ]);
-        return [
-            'success' => $success
-        ];
+
+        return $this->fromChurch(request('church_id'));
+
+        // return [
+        //     'success' => $success
+        // ];
     }
 
     public function destroy(User $user){
@@ -281,4 +284,12 @@ class UsersApiController extends Controller
         //-------------------- 
 */
     }
+
+    public function softDelete(User $user){
+        $user->update([
+            'active' => false
+        ]);
+        return $this->fromChurch(request('church_id'));
+    }
+
 }

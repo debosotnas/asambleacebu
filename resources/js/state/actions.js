@@ -127,6 +127,18 @@ const callFetchSomethingToVote = async (dispatch) => {
         method: "GET",
     });
     if (data && data.length) {
+        const obj = data[0];
+        if (obj && obj.alreadyVote) {
+            dispatch({
+                type: SHOW_GLOBAL_ALERT,
+                payload: {
+                    msg: "Parece que ya has enviado tu voto para la elección en curso. Por favor espera hasta que el moderador lo indique.",
+                    type: GLOBAL_ALERT_TYPES.INFO,
+                    withTime: false,
+                },
+            });
+            return;
+        }
         dispatch({ type: HIDE_GLOBAL_ALERT });
         dispatch({ type: UPDATE_READY_TO_VOTE, payload: { ...data[0] } });
     } else {
@@ -507,6 +519,48 @@ export const makeElectionActive = async ({ dispatch, payload }) => {
             payload: {
                 msg: "Ocurrió un error al intentar activar/desactivar la elección. Recargue e intente nuevamente.",
                 code: "57",
+                type: GLOBAL_ALERT_TYPES.INFO,
+                withTime: false,
+            },
+        });
+    }
+};
+
+export const makeUpdateUser = async ({ dispatch, payload }) => {
+    const data = await preBaseFetch(dispatch, {
+        url: BASE_API_PATH + USERS_API_PATH + "/" + payload.id,
+        method: "PUT",
+        payload,
+    });
+    if (data && data.church_id && data.users && data.users.length) {
+        dispatch({ type: UPDATE_USER_FROM_CHURCH, payload: data });
+    } else {
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "Ocurrió un error al intentar actualizar los datos del usuario. Recargue e intente nuevamente.",
+                code: "X57",
+                type: GLOBAL_ALERT_TYPES.INFO,
+                withTime: false,
+            },
+        });
+    }
+};
+
+export const makeDelUser = async ({ dispatch, payload }) => {
+    const data = await preBaseFetch(dispatch, {
+        url: BASE_API_PATH + USERS_API_PATH + "/del/" + payload.id,
+        method: "PUT",
+        payload,
+    });
+    if (data && data.church_id && data.users && data.users.length) {
+        dispatch({ type: UPDATE_USER_FROM_CHURCH, payload: data });
+    } else {
+        dispatch({
+            type: SHOW_GLOBAL_ALERT,
+            payload: {
+                msg: "Ocurrió un error al intentar eliminar un usuario. Recargue e intente nuevamente.",
+                code: "X58",
                 type: GLOBAL_ALERT_TYPES.INFO,
                 withTime: false,
             },
