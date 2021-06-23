@@ -152,7 +152,7 @@ const Vote = ({
             } finally {
                 setIsCheckingVote(false);
             }
-        }, 1);
+        }, Math.ceil(Math.random() * 3000));
         // }, 1000);
     };
 
@@ -316,8 +316,8 @@ const Vote = ({
                             ) : (
                                 <span>
                                     {" "}
-                                    Haga click aquí para ver la votación que
-                                    está disponible
+                                    Haga click o toque aquí para ver la votación
+                                    que está disponible
                                     {/* <VisibilityIcon /> */}
                                 </span>
                             )}

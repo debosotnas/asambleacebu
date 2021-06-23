@@ -84,8 +84,8 @@ const AddNewChurch = ({ churches, makeAddUser, dispatch }) => {
             document.querySelector("#ci").value = "";
             document.querySelector("#username").value = "";
             document.querySelector("#phone").value = "";
-            setSelectedDropD("--");
-            setSelectedDropDChurch(null);
+            // setSelectedDropD("--");
+            // setSelectedDropDChurch(null);
         } catch (e) {
             console.log("Error after add church! - Err: ", e);
         } finally {

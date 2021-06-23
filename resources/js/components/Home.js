@@ -281,10 +281,6 @@ const Home = ({
                                                         <span>Nombre:</span>{" "}
                                                         {name}
                                                     </div>
-                                                    <div css={styles.tagData}>
-                                                        <span>E-mail:</span>{" "}
-                                                        {email}
-                                                    </div>
                                                 </Col>
                                                 <Col xs={6}>
                                                     <div css={styles.tagData}>

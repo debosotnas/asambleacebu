@@ -336,6 +336,7 @@ const ListChurches = ({
                                     <FormControl
                                         name="ciEdit"
                                         value={ciUser}
+                                        maxLength="8"
                                         onChange={(e) => {
                                             setCiUser(e.target.value);
                                         }}
@@ -364,6 +365,7 @@ const ListChurches = ({
                                     <FormControl
                                         name="celEdit"
                                         value={editCel}
+                                        maxLength="9"
                                         onChange={(e) => {
                                             setEditCel(e.target.value);
                                         }}
