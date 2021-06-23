@@ -241,10 +241,10 @@ const ListChurches = ({
                 <Container>
                     <Row>
                         <Col xs={7}>
-                            <span class="title-list">Nombre (Cel)</span>
+                            <span class="title-list">Nombre</span>
                         </Col>
                         <Col xs={2}>
-                            <span class="title-list">Código</span>
+                            <span class="title-list">Cel</span>
                         </Col>
                         <Col xs={3}></Col>
                     </Row>
@@ -258,12 +258,12 @@ const ListChurches = ({
                                         <Row>
                                             <Col xs={7}>
                                                 <div class="l-col">
-                                                    {c.name} ({c.phone})
+                                                    {c.name}
                                                 </div>
                                             </Col>
                                             <Col xs={2}>
                                                 <div class="l-col">
-                                                    {c.password}
+                                                    {c.phone}
                                                 </div>
                                             </Col>
                                             <Col xs={3}>

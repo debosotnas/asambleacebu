@@ -13,3 +13,7 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
+git_ed25519
+git_ed25519.pub
+git_id_ed25519
+git_id_ed25519.pub

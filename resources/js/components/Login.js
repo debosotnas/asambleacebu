@@ -67,10 +67,10 @@ const Login = ({ makeLogin, dispatch }) => {
 
     const handleSubmit = async () => {
         const ci = document.querySelector("#ci").value;
-        // if (!validate_ci(ci)) {
-        //     console.log("Invalid C.I.");
-        //     return;
-        // }
+        if (!validate_ci(ci)) {
+            console.log("Invalid C.I.");
+            return;
+        }
 
         /*
         // const email = document.querySelector("#email").value;
@@ -81,16 +81,16 @@ const Login = ({ makeLogin, dispatch }) => {
         */
 
         const cel = document.querySelector("#cel").value;
-        // if (cel && !validateCel(cel)) {
-        //     console.log("Invalid Cel");
-        //     return;
-        // }
+        if (cel && !validateCel(cel)) {
+            console.log("Invalid Cel");
+            return;
+        }
         // if (!email && !cel) {
         //     console.log("Email o Cel is required!");
         //     return;
         // }
 
-        const code = document.querySelector("#code").value;
+        // const code = document.querySelector("#code").value;
         // if (!validateAccess(code)) {
         //     console.log("Invalid código de acceso personal");
         //     return;
@@ -100,7 +100,7 @@ const Login = ({ makeLogin, dispatch }) => {
             ci,
             cel,
             // email,
-            code,
+            // code,
         };
 
         try {
@@ -187,7 +187,7 @@ const Login = ({ makeLogin, dispatch }) => {
                                 ></input>
                             </Col>
                         </Row> */}
-                        <Row css={styles.parentSpan}>
+                        {/* <Row css={styles.parentSpan}>
                             <Col>
                                 <span css={styles.span}>
                                     Código de Accesso Personal:
@@ -200,7 +200,7 @@ const Login = ({ makeLogin, dispatch }) => {
                                     autoComplete="off"
                                 ></input>
                             </Col>
-                        </Row>
+                        </Row> */}
                         <Row>
                             <Col>
                                 <br />

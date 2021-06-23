@@ -167,18 +167,18 @@ class UsersApiController extends Controller
     public function signin() {
         request()->validate([
             'ci' => 'required',
-            'code' => 'required',
+            'cel' => 'required',
         ]);
         $ci = request('ci');
         $cel = request('cel');
         // $email = request('email');
-        $code = request('code');
+        // $code = request('code');
 
         $users = DB::table('users')
             ->join('churches', 'users.church_id', '=', 'churches.id')
             ->select('users.id', 'users.ci', 'users.name', 'users.email', 'users.phone', 'churches.name as cname', 'churches.id as cid')
             ->where('users.ci', '=', $ci)
-            ->where('users.password', '=', $code)
+            // ->where('users.password', '=', $code)
             ->where('users.phone', '=', $cel)
             // ->where('users.email', '=', $email)
             ->where('churches.active', '=', true)
