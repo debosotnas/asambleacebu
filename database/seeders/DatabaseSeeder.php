@@ -42,10 +42,10 @@ class DatabaseSeeder extends Seeder
 
         DB::table('users')->insert([
             'church_id' => $id_c_1,
-            'ci' => '11111111',
+            'ci' => '11111112',
             'name' => Str::random(10). ' '. Str::random(10),
             'email' => '111@gmail.com',
-            'phone' => '091111111',
+            'phone' => '091111112',
             'password' => '111',
             'active' => true,
         ]);
@@ -124,10 +124,10 @@ class DatabaseSeeder extends Seeder
         ]);
         DB::table('users')->insert([
             'church_id' => $id_c_3,
-            'ci' => '123',
+            'ci' => '11111111',
             'name' => 'Test Testerson',
             'email' => '123@asdf.com',
-            'phone' => '123',
+            'phone' => '091234567',
             'password' => '123',
             'active' => true,
         ]);

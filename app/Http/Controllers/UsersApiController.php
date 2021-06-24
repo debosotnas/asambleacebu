@@ -212,6 +212,9 @@ class UsersApiController extends Controller
                 // $returnUser['idSession'] = Session::get('user_id');
             }
 
+            DB::table('users')
+                ->where('id', $firstUser->id)
+            ->update(['lastlogin' => DB::raw('CURRENT_TIMESTAMP')]);            
             /*
             -
             // accessing key in session
