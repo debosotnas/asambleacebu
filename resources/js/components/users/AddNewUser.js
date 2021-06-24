@@ -37,6 +37,11 @@ const makeStyles = ({ isMobile }) => ({
         margin: 5px 0 10px 0;
     `,
     ddWrap: css`
+        .show.dropdown-menu {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
         /* width: 100%; */
         // overflow-x: hidden;
     `,

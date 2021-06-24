@@ -39,6 +39,10 @@ const makeStyles = ({ isMobile }) => ({
         margin-bottom: 10px;
         margin-left: 15px;
         /* text-align: center; */
+        .show.dropdown-menu {
+            max-height: 400px;
+            overflow-y: auto;
+        }
     `,
     listChurchesBlock: css`
         margin: 10px 0;
