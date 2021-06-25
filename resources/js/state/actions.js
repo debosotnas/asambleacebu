@@ -416,7 +416,7 @@ export const makeLogin = async (payload, dispatch) => {
                 dispatch({
                     type: SHOW_GLOBAL_ALERT,
                     payload: {
-                        msg: "Datos no encontrados en el sistema. Intenta nuevamente, esta vez ingresando solo tu C.I y Código de Acceso Personal. Si el problema persiste verifica que tu iglesia haya enviado tus datos correctamente a la CEBU.",
+                        msg: "Datos no encontrados en el sistema, intenta nuevamente. Si el problema persiste verifica que tu iglesia haya enviado tus datos correctamente a la CEBU.",
                         code: "157",
                         type: GLOBAL_ALERT_TYPES.INFO,
                         withTime: false,

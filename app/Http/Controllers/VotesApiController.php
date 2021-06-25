@@ -86,15 +86,6 @@ class VotesApiController extends Controller
             array_push($uuu, $tmp);
         }
 
-        // if(count($uuu) > 0 && !$alreadyVote) {
-        //     $user_id = Session::get('user_id');
-        //     if ($user_id) {
-        //         DB::table('users')
-        //         ->where('id', $user_id)
-        //             ->update(['lastaction' => DB::raw('CURRENT_TIMESTAMP')]);
-        //     }
-        // }
-
         return $uuu;
     }
 

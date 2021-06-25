@@ -134,6 +134,8 @@ const Vote = ({
     // };
 
     const handleExitNoVote = async () => {
+        setSelectedName("");
+        setSelectedOption(0);
         setShowFakeVoteScreen(false);
     };
 

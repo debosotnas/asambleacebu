@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Election;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -58,9 +59,11 @@ class ElectionsApiController extends Controller
 
         $uuu = array();
 
+        $user_already_voted = false;
         foreach ($elections as $election) {
             $opts = $this->getOptions($election->id);
             $alreadyVote = $this->userAlreadyVoted($election->id);
+            $user_already_voted = $alreadyVote ? $alreadyVote : $user_already_voted;
 
             $tmp = [
                 'id' => $election->id,
@@ -71,6 +74,19 @@ class ElectionsApiController extends Controller
                 'opts' => $opts,
             ];
             array_push($uuu, $tmp);
+        }
+
+        if(count($uuu) > 0 && !$user_already_voted) {
+            try {
+                $user_id = Session::get('user_id');
+                if ($user_id) {
+                    DB::table('users')
+                    ->where('id', $user_id)
+                        ->update(['lastaction' => DB::raw('CURRENT_TIMESTAMP')]);
+                }
+            } catch (Exception $e) {
+                    
+            }
         }
 
         return $uuu;
@@ -153,7 +169,18 @@ class ElectionsApiController extends Controller
 
     public function getGeneralResults($election) {
 
-
+/*
+select
+    options.name, votes.option_id, count(*) as total
+from
+    votes inner join options
+    on
+        votes.option_id = options.id
+where
+    votes.election_id = $election
+group by 
+    votes.option_id
+*/
 
         $counter = DB::table('votes')
             ->join('options', 'votes.option_id', '=', 'options.id')
@@ -162,16 +189,44 @@ class ElectionsApiController extends Controller
             ->groupBy('votes.option_id')
             ->get();
 
-        // $votes = DB::table('votes')
-        //     ->select('votes.id', 'votes.election_id', 'votes.option_id')
-        //     ->where('votes.election_id', '=', $election)
-        //     ->groupBy('votes.option_id')
-        //     ->count();
-            // ->where('votes.user_id', '=', $user_id)
-            // ->get();
+/*
+select 
+    churches.name, churches.members, count(*) as perChurch, (count(*) * 100 / churches.members) as percent 
+from 
+    votes, users, churches 
+where 
+    votes.user_id = users.id and users.church_id = churches.id and users.active = true and votes.election_id = 1 
+group by 
+    churches.id
+*/
+        $bychurches = DB::table('votes')
+            ->join('users', 'votes.user_id', '=', 'users.id')
+            ->join('churches', 'users.church_id', '=', 'churches.id')
+            ->select(DB::raw('churches.name, churches.members, count(*) as perChurch, (count(*) * 100 / churches.members) as percent'))
+            ->where('users.active', '=', true) 
+            ->where('votes.election_id', '=', $election)
+            ->groupBy('churches.id')
+            ->get();
 
+
+        $tmpChurches = array();
+
+        foreach ($bychurches as $ch) {
+            $tmp = [
+                'name' => $ch->name,
+                'members' => $ch->members,
+                'perChurch' => $ch->perChurch,
+                'percent' => $ch->percent,
+            ];
+            array_push($tmpChurches, $tmp);
+        }
+// pending return also for every church, how many:
+    // - login (from 9am)
+    // - click on "try to vote" ('something ready?')
+    // - 
         return [
-            'totals' => $counter
+            'totals' => $counter,
+            'churches' => $tmpChurches
         ];
             
 
