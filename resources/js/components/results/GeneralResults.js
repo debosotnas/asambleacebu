@@ -267,7 +267,7 @@ const Results = ({ elections, countPerOption, countPerChurch, dispatch }) => {
                                                 c.votesPerChurch
                                             }{" "}
                                             <br />
-                                            Porcentaje:{c.percent}%
+                                            Porcentaje:{Math.ceil(c.percent)}%
                                         </div>
                                         <div>
                                             <VictoryPie
