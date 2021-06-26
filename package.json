@@ -37,6 +37,7 @@
         "dotenv": "^10.0.0",
         "react-bootstrap": "^1.6.1",
         "react-device-detect": "^1.17.0",
-        "react-redux": "^7.2.4"
+        "react-redux": "^7.2.4",
+        "victory-pie": "^35.9.0"
     }
 }

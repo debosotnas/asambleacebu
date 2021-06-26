@@ -649,9 +649,9 @@ export const getGeneralResults = async ({ payload, dispatch }) => {
         url: BASE_API_PATH + ELECTIONS_API_PATH + "/general/" + payload.id,
         method: "GET",
     });
-    if (data && data.totals) {
+    if (data && data.totals && data.churches) {
         dispatch({ type: HIDE_GLOBAL_ALERT });
-        dispatch({ type: UPDATE_GENERAL_RESULTS, payload: [...data.totals] });
+        dispatch({ type: UPDATE_GENERAL_RESULTS, payload: data });
         // dispatch({ type: UPDATE_READY_TO_VOTE, payload: { ...data[0] } });
     } else {
         dispatch({

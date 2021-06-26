@@ -180,6 +180,7 @@ where
     votes.election_id = $election
 group by 
     votes.option_id
+
 */
 
         $counter = DB::table('votes')
@@ -190,48 +191,130 @@ group by
             ->get();
 
 /*
+
+VOTES FOR CHURCHES
+------------------
+
 select 
-    churches.name, churches.members, count(*) as perChurch, (count(*) * 100 / churches.members) as percent 
+    elections.id as electionId, elections.title as electionTitle, churches.id as churchId, churches.name, churches.members, count(*) as perChurch, (count(*) * 100 / churches.members) as percent 
 from 
-    votes, users, churches 
+    votes, elections, users, churches
 where 
-    votes.user_id = users.id and users.church_id = churches.id and users.active = true and votes.election_id = 1 
+    votes.election_id = elections.id and votes.user_id = users.id and users.church_id = churches.id and users.active = true and votes.election_id = 1 
 group by 
     churches.id
 */
+/*
         $bychurches = DB::table('votes')
             ->join('users', 'votes.user_id', '=', 'users.id')
             ->join('churches', 'users.church_id', '=', 'churches.id')
-            ->select(DB::raw('churches.name, churches.members, count(*) as perChurch, (count(*) * 100 / churches.members) as percent'))
+            ->join('elections', 'votes.election_id', '=', 'elections.id')
+            ->select(DB::raw('votes.election_id, churches.id as churchId, churches.name, churches.members, count(*) as perChurch, (count(*) * 100 / churches.members) as percent'))
             ->where('users.active', '=', true) 
             ->where('votes.election_id', '=', $election)
             ->groupBy('churches.id')
             ->get();
+*/
+        // $bychurches = DB::table('votes')
+        //     ->join('elections', 'votes.election_id', '=', 'elections.id')
+        //     ->join('users', 'votes.user_id', '=', 'users.id')
+        //     ->join('churches', 'users.church_id', '=', 'churches.id')
+        //     ->select(DB::raw('elections.id as electionId, elections.title as electionTitle, churches.id as churchId, 
+        //                             churches.name, churches.members, count(*) as perChurch, (count(*) * 100 / churches.members) as percent'))
+        //     ->where('users.active', '=', true) 
+        //     ->where('votes.election_id', '=', $election)
+        //     ->groupBy('churches.id')
+        //     ->get();
 
+    //     $bychurches = DB::select("select 
+    //     elections.id as electionId, elections.title as electionTitle, churches.id as churchId, churches.name, churches.members, count(*) as votesPerChurch, (count(*) * 100 / churches.members) as percent 
+    // from 
+    //     votes, elections, users, churches
+    // where 
+    //     votes.election_id = elections.id and votes.user_id = users.id and users.church_id = churches.id and users.active = true and votes.election_id = $election 
+    // group by 
+    //     churches.id");
+
+        $bychurches = DB::select("select 
+        elections.id as electionId, elections.title as electionTitle, churches.id as churchId, churches.name, churches.members, count(*) as votesPerChurch, (count(*) * 100 / churches.members) as perc 
+            from 
+                votes, elections, users, churches
+            where 
+                votes.election_id = elections.id and votes.user_id = users.id and users.church_id = churches.id and users.active = true and votes.election_id = $election 
+            group by 
+                churches.id
+            order by perc asc");
+
+        // $churchMembers = array();
 
         $tmpChurches = array();
 
         foreach ($bychurches as $ch) {
+            // if (!array_key_exists($ch->churchId, $churchMembers)) {
+            //     $churchMembers[$ch->churchId] = $this->getNumChurchMembers($ch->churchId);
+            // }
+            $mem = $this->getNumChurchMembers($ch->churchId);
             $tmp = [
+                // 'electionId' => $ch->electionId,
+                // 'electionTitle' => $ch->electionTitle,
+                'churchId' => $ch->churchId,
                 'name' => $ch->name,
-                'members' => $ch->members,
-                'perChurch' => $ch->perChurch,
-                'percent' => $ch->percent,
+                'membersRegistered' => $ch->members,
+                // 'members' => $churchMembers[$ch->churchId],
+                'members' => $mem,
+                'votesPerChurch' => $ch->votesPerChurch,
+                'percent' => ($ch->votesPerChurch * 100 / $mem),
+                // 'percent' => $ch->percent,
             ];
             array_push($tmpChurches, $tmp);
         }
+
 // pending return also for every church, how many:
     // - login (from 9am)
     // - click on "try to vote" ('something ready?')
     // - 
+
+    // $tmpUsersData = array();
+    // for every church return:
+        // - each user
+            // - lastlogin
+            // - lastaction
+    // array_push($tmpUsersData, $tmpU);
+
+
+
+/*
+    select 
+        name, lastlogin, lastaction 
+    from 
+        users 
+        inner join 
+        churches 
+            on users.church_id = churches.id
+    where 
+        users.active = true 
+        and
+        churches.active = true
+        and
+    lastaction is NULL
+*/
+
         return [
             'totals' => $counter,
             'churches' => $tmpChurches
         ];
-            
 
         // return count($votes) > 0;
 
+    }
+
+    private function getNumChurchMembers($idChurch) {
+        $usersFromChurch = DB::table('users')
+            ->select('users.id')
+            ->where('users.church_id', '=', $idChurch)
+            ->where('users.active', '=', true)
+            ->get();
+        return count($usersFromChurch);
     }
 
 }
