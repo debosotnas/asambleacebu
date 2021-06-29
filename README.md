@@ -30,38 +30,14 @@ Ports:
     php artisan db:seed --class=UserSeeder
 
 
-## Next Steps for CEBU App:
-Admin panel:
-- Add a global control (button) to start/stop VOTATION
-
-- Configure 3 subsections: 
-    - Users And Churches:
-        - create church
-        - create user
-    - List and see results
-        - list how many assist are LOGGED IN by church.
-        - list how many assist had/are voting/voted by church (Total agains Voted).
-        - list 
-
-- Add a button to create/configure new election
-- List elecions available (created) and its states (disabled/enabled)
-    - for each election list its options
-
-- 
-
-////////////////
-
-Pending for Elections:
-Add #2 secionts:
-- ABM: to add / modify / delete elections and its options
-- Listing: to see details about active-inactive elections
-
-TODO: 
-
-ABM:
-    - Create Election 
-    - Add options to Election
-    - Create button to on/off election (xxxxxx Add main button "Enable/disable votation" xxxxx)
+## Progress and release content info:
+CRUD for Admin users (for now admin users are configured hardcoded, according dbId):
+- Elections
+- Churches
+- Users
 LIST:
-    - User logged
-    - Votes for church
+- List of votes
+- List of results
+
+Election control:
+- Global control (button) to start/stop VOTATION
